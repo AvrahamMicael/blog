@@ -1,14 +1,16 @@
 <script>
 import {mapState} from 'vuex'
 import Header from './components/Header.vue'
+import AuthPopup from './components/AuthPopup.vue'
 
 export default {
   computed: {
-    ...mapState(['user'])
+    ...mapState(['user', 'popup'])
   },
   components: {
-    Header
-  }
+    Header,
+    AuthPopup
+  },
 }
 </script>
 
@@ -16,5 +18,13 @@ export default {
   <div>
     <Header/>
     <router-view/>
+    <AuthPopup v-if="popup"/>
   </div>
 </template>
+
+<style lang="css">
+  .text-decoration-none
+  {
+    text-decoration: none;
+  }
+</style>
