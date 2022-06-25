@@ -23,9 +23,7 @@ import LoginForm from './LoginForm.vue';
 
 export default {
     methods: {
-        ...mapMutations([
-            'changeAuthPopup'
-        ])
+        ...mapMutations(['changeAuthPopup'])
     },
     computed: {
         ...mapState(['popup'])

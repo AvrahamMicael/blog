@@ -6,7 +6,7 @@
             </small>
         </a>
 
-        <button class="btn btn-outline-success text-capitalize">
+        <button id="auth_button" class="btn btn-outline-success text-capitalize">
             {{ popup }}
         </button>
     </div>
@@ -25,7 +25,7 @@ export default {
                 return 'Already have an account? Login now!';
             }
             return "Doesn't have an account? Register for free!";
-        },
+        }
     }
 };
 </script>
