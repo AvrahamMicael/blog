@@ -5,7 +5,7 @@
         <label for="password">Password:</label>
         <input v-model="user.password" type="password" required name="password" id="password" class="form-control">
         <Checkbox label="Remember me" v-model="user.remember"/>
-        <AuthErrorsList :errors="errors"/>
+        <AuthErrorsList :errors="errors" @cleanErrors="errors = {}"/>
         <AuthButton/>
     </form>
 </template>
@@ -24,7 +24,7 @@ export default {
                 remember: false
             },
             disableButton: false,
-            errors: []
+            errors: {}
         };
     },
     components: {
