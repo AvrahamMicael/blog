@@ -8,7 +8,7 @@
         <input v-model="user.password" type="password" required name="password" id="password" class="form-control">
         <label for="password_confirmation">Confirm Password:</label>
         <input v-model="user.password_confirmation" type="password" required name="password_confirmation" id="password_confirmation" class="form-control">
-        <AuthErrorsList :errors="errors" @cleanErrors="errors = {}"/>
+        <AuthErrorsList v-model="errors"/>
         <AuthButton/>
     </form>
 </template>

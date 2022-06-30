@@ -5,10 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Role extends Model
+class PostContent extends Model
 {
     use HasFactory;
 
-    public const USER = 1;
-    public const ADMIN = 2;
+    protected $fillable = [
+        'type',
+        'value',
+        'id_post'
+    ];
 }

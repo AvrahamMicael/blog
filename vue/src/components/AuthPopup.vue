@@ -34,29 +34,3 @@ export default {
     }
 };
 </script>
-
-<style lang="css" scoped>
-    #popup-outer
-    {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 99;
-        background-color: rgba(0, 0, 0, 0.2);
-        
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    #popup-outer
-        #popup-inner
-    {
-        min-width: 400px;
-        background: white;
-        padding: 32px;
-        border-radius: 16px;
-    }
-</style>

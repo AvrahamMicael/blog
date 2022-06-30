@@ -1,14 +1,21 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { guest, user, admin } from '../constants/Roles.js';
+import { user, admin } from '../constants/Roles.js';
+
 import Home from '../views/Home.vue';
 import NewPost from '../views/NewPost.vue';
+import Post from '../views/Post.vue';
+
 import store from '../store';
+import DefaultLayout from '../components/DefaultLayout.vue'
 
 const routes = [
    {
       path: '/',
-      name: 'Home',
-      component: Home
+      component: DefaultLayout,
+      children: [
+         { name: 'Home', path: '/', component: Home },
+         { name: 'Post', path: '/post/:id', component: Post }
+      ]
    },
    {
       path: '/post/create',
@@ -25,7 +32,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
    if(to.meta.isAdmin
-   && store.state.user.role != admin)
+   && store.state.user.data.role != admin)
    {
       next({name: 'Home'});  /// -change later
    }

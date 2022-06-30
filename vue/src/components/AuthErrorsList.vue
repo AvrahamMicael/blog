@@ -9,7 +9,7 @@
                 {{ error[0] }}
             </div>
             <div class="d-flex col-3 justify-content-center">
-                <i @click="$emit('cleanErrors')" class="my-auto fa-solid fa-x"/>
+                <i @click="errors = {}" class="my-auto fa-solid fa-x"/>
             </div>
         </div>
     </div>
@@ -17,8 +17,16 @@
 
 <script>
 export default {
-    props: ['errors'],
+    props: ['modelValue'],
     computed: {
+        errors: {
+            get() {
+                return this.modelValue;
+            },
+            set(value) {
+                this.$emit('update:modelValue', value)
+            }
+        },
         showErrors() {
             return Object.keys(this.errors).length !== 0;
         }

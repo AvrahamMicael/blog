@@ -10,19 +10,19 @@
                 </router-link>
             </li>
             <li><hr class="dropdown-divider"></li>
-            <li v-if="user.role == admin">
+            <li v-if="user.data.role == admin">
                 <router-link class="dropdown-item" :to="{name: 'NewPost'}">
                     New Post
                 </router-link>
             </li>
-            <li v-if="user.role == admin"><hr class="dropdown-divider"></li>
+            <li v-if="user.data.role == admin"><hr class="dropdown-divider"></li>
             <li><a @click="logout" class="dropdown-item" href="javascript:;">Logout</a></li>
         </ul>
     </div>
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex'
+import { mapState } from 'vuex';
 import { admin } from '../constants/Roles.js';
 
 
@@ -33,7 +33,26 @@ export default {
         };
     },
     methods: {
-        ...mapMutations(['logout'])
+        logout() {
+            // this.$store
+            //     .dispatch('logout')
+            //     .then(() => {
+            //         if(this.$route.meta.isAdmin)
+            //         {
+            //             this.$router.push({
+            //                 name: 'Home'
+            //             });
+            //         }
+            //     });
+            this.$store
+                .commit('logout');
+            if(this.$route.meta.isAdmin)
+            {
+                this.$router.push({
+                    name: 'Home'
+                });
+            }
+        }
     },
     computed: {
         ...mapState(['user'])
