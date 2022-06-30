@@ -1,17 +1,14 @@
 <template>
-    <div>
-        test
-        <h2>{{ post.title }}</h2>
-        <p>
-            {{ post.body }}
-        </p>
-    </div>
+    <Post v-model="post"/>
 </template>
 
 <script>
-// import { mapState } from 'vuex';
+import Post from '../components/Post.vue';
 
 export default {
+    components: {
+        Post
+    },
     computed: {
         post() {
             return this.$store.state.posts.find(post => {

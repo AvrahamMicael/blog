@@ -47,13 +47,10 @@
                             v-else
                             class="row justify-content-center mt-3"
                         >
-                            <div v-if="body_content.value" class="col-12">
-                                <img
-                                    :src="body_content.value"
-                                    :alt="`content_img_${index}`"
-                                    class="img-fluid mx-auto d-block mb-3"
-                                >
-                            </div>
+                            <PostImg
+                                :content_value="body_content.value"
+                                :index="index"
+                            />
                             <div class="col-md-6">
                                 <Input
                                     @change="onFileChange"
@@ -89,6 +86,7 @@ import Input from '../components/Input.vue';
 import Select from '../components/Select.vue';
 import TextArea from '../components/TextArea.vue';
 import Popup from '../components/Popup.vue';
+import PostImg from '../components/PostImg.vue';
 
 export default {
     data() {
@@ -109,7 +107,8 @@ export default {
         Input,
         Popup,
         TextArea,
-        Select
+        Select,
+        PostImg
     },
     methods: {
         toggleAddContentPopup() {
@@ -138,5 +137,5 @@ export default {
             // upload...
         }
     }
-}
+};
 </script>
