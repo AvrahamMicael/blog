@@ -38,9 +38,8 @@ const tempPosts = [
 const store = createStore({
     state: {
         user: {
-            data: {},
-            token: null
-            // token: sessionStorage.getItem('token')
+            data: JSON.parse(sessionStorage.getItem('user.data')) ?? {},
+            token: JSON.parse(sessionStorage.getItem('user.token'))
         },
         popup: null,
         posts: [...tempPosts]
@@ -108,12 +107,15 @@ const store = createStore({
                 return post;
             });
         },
-        setUser(state, response) {
-            // sessionStorage.setItem('token', response.token);
-            state.user.token = response.token;
-            state.user.data = response.user;
+        setUser(state, res) {
+            sessionStorage.setItem('user.token', JSON.stringify(res.token));
+            state.user.token = res.token;
+
+            sessionStorage.setItem('user.data', JSON.stringify(res.user));
+            state.user.data = res.user;
         },
         logout(state) {
+            sessionStorage.clear();
             state.user.data = {};
             state.user.token = null;
         },
