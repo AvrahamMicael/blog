@@ -15,8 +15,9 @@ return new class extends Migration
     {
         Schema::create('post_contents', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('id_post')->constrained('posts');
             $table->string('type');
-            $table->string('value');
+            $table->text('value');
             $table->timestamps();
         });
     }

@@ -24,7 +24,7 @@
         </Popup>
         <div class="row justify-content-center">
             <div class="card col-md-10 mb-4">
-                <form @submit.prevent="uploadPost" enctype="multipart/form-data" class="card-body">
+                <form @submit.prevent="savePost" enctype="multipart/form-data" class="card-body">
                     <Input
                         v-model="post.title"
                         name="title"
@@ -34,13 +34,12 @@
                     <!-- <Input v-model="post.main_img" name="Main Image" type="file"/> -->
                     <div
                         v-for="(body_content, index) in post.body"
-                        :key="body_content.value"
+                        :key="`body-${index}`"
                     >
                         <TextArea
                             v-if="body_content.type == 'text'"
                             v-model="body_content.value"
                             :name="index == 0 ? 'content' : null"
-                            type="textarea"
                             :required="true"
                         />
                         <div
@@ -133,8 +132,15 @@ export default {
         getIndexFromArrayString(string) {
             return string.slice(string.indexOf('[') + 1, string.indexOf(']'));
         },
-        uploadPost() {
-            // upload...
+        savePost() {
+            this.$store
+                .dispatch('savePost', this.post)
+                .then(res => {
+                    this.$router.push({
+                        name: 'Post',
+                        params: { id: res.data.id }
+                    });
+                });
         }
     }
 };

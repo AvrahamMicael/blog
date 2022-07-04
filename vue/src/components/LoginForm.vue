@@ -6,7 +6,6 @@
         <input v-model="user.password" type="password" required name="password" id="password" class="form-control">
         <Checkbox label="Remember me" v-model="user.remember"/>
         <AuthErrorsList v-model="errors"/>
-        <!-- <AuthErrorsList :errors="errors" @cleanErrors="errors = {}"/> -->
         <AuthButton/>
     </form>
 </template>

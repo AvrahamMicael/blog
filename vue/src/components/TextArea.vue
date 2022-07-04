@@ -8,7 +8,6 @@
             .required="required ?? false"
             rows="3"
             class="form-control"
-            maxLength="255"
         ></textarea>
     </div>
 </template>

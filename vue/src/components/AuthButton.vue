@@ -24,7 +24,7 @@ export default {
             {
                 return 'Already have an account? Login now!';
             }
-            return "Doesn't have an account? Register for free!";
+            return "Doesn't have an account? Register now!";
         }
     }
 };

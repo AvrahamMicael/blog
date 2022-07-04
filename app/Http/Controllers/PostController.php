@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\UpdatePostRequest;
+use App\Http\Resources\PostResource;
+use App\Models\Post;
+use App\Models\Role;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -11,9 +16,11 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $req)
     {
-        //
+        return PostResource::collection(
+            Post::orderBy('created_at')->paginate()
+        );
     }
 
     /**
@@ -22,9 +29,17 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StorePostRequest $req)
     {
-        //
+        abort_if($req->user()->role != Role::ADMIN, 401);
+
+        $post = Post::create($req->all());
+        $post->body()
+            ->createMany($req->body);
+
+        $post = Post::with('body')->find($post->id);
+
+        return response($post, 200);
     }
 
     /**
@@ -33,9 +48,11 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(int $id)
     {
-        //
+        $post = Post::with('body')->findOrFail($id);
+        
+        return new PostResource($post);
     }
 
     /**
@@ -45,9 +62,12 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdatePostRequest $req, Post $post)
     {
-        //
+        abort_if($req->user()->role != Role::ADMIN, 401);
+
+        $post->update($req->all());
+        return new PostResource($post);
     }
 
     /**
@@ -56,8 +76,11 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Post $post, Request $req)
     {
-        //
+        abort_if($req->user()->role != Role::ADMIN, 401);
+
+        $post->delete();
+        return response('', 204);
     }
 }

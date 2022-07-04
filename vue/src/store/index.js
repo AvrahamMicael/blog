@@ -38,11 +38,8 @@ const tempPosts = [
 const store = createStore({
     state: {
         user: {
-            data: {
-                role: admin,
-                name: 'Micael'
-            },
-            token: 123
+            data: {},
+            token: null
             // token: sessionStorage.getItem('token')
         },
         popup: null,
@@ -65,9 +62,52 @@ const store = createStore({
                     commit('setUser', data);
                     return data;
                 });
+        },
+        savePost({ commit }, post) {
+            let response
+            if(post.id)
+            {
+                response = axiosClient
+                    .put(`/post/${post.id}`, post)
+                    .then(res => {
+                        commit('updatePost', res.data);
+                        return res;
+                    });
+            }
+            else
+            {
+                response = axiosClient
+                    .post('/post', post)
+                    .then(res => {
+                        commit('savePost', res.data);
+                        return res;
+                    });
+            }
+
+            return response;
+        },
+        logout({ commit }) {
+            return axiosClient.post('/logout')
+                .then(res => {
+                    commit('logout');
+                    return res;
+                });
         }
     },
     mutations: {
+        savePost(state, post) {
+            state.posts = [...state.posts, post];
+        },
+        updatePost(state, updated_post) {
+            state.posts = state.posts.map(post => {
+                if(post.id == updated_post.id)
+                {
+                    return updated_post;
+                }
+
+                return post;
+            });
+        },
         setUser(state, response) {
             // sessionStorage.setItem('token', response.token);
             state.user.token = response.token;

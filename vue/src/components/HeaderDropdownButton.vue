@@ -34,24 +34,16 @@ export default {
     },
     methods: {
         logout() {
-            // this.$store
-            //     .dispatch('logout')
-            //     .then(() => {
-            //         if(this.$route.meta.isAdmin)
-            //         {
-            //             this.$router.push({
-            //                 name: 'Home'
-            //             });
-            //         }
-            //     });
             this.$store
-                .commit('logout');
-            if(this.$route.meta.isAdmin)
-            {
-                this.$router.push({
-                    name: 'Home'
+                .dispatch('logout')
+                .then(() => {
+                    if(this.$route.meta.isAdmin)
+                    {
+                        this.$router.push({
+                            name: 'Home'
+                        });
+                    }
                 });
-            }
         }
     },
     computed: {

@@ -18,7 +18,7 @@ export default {
     computed: {
         value_input: {
             get() {
-                return this.modelValue?.value;
+                return this.modelValue;
             },
             set(value) {
                 this.$emit('update:modelValue', value);
