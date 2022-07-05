@@ -63,11 +63,18 @@ const store = createStore({
                 });
         },
         savePost({ commit }, post) {
-            let response
+            let response;
+            const fd = new FormData();
+            fd.append('title', post.title);
+            post.body.forEach(( body_content, index ) => {
+                fd.append(`body[${index}][type]`, body_content.type);
+                fd.append(`body[${index}][value]`, body_content.value);
+            });
+
             if(post.id)
             {
                 response = axiosClient
-                    .put(`/post/${post.id}`, post)
+                    .put(`/post/${post.id}`, fd)
                     .then(res => {
                         commit('updatePost', res.data);
                         return res;
@@ -76,7 +83,7 @@ const store = createStore({
             else
             {
                 response = axiosClient
-                    .post('/post', post)
+                    .post('/post', fd)
                     .then(res => {
                         commit('savePost', res.data);
                         return res;

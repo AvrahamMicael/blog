@@ -1,7 +1,7 @@
 <template>
-    <div v-if="content_value" class="col-12">
+    <div v-if="content_src" class="col-12">
         <img
-            :src="content_value"
+            :src="content_src"
             :alt="`content_img_${index}`"
             class="img-fluid mx-auto d-block mb-3"
         >
@@ -11,6 +11,6 @@
 
 <script>
 export default {
-    props: ['content_value', 'index']
+    props: ['content_src', 'index']
 };
 </script>

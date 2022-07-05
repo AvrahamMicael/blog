@@ -24,7 +24,7 @@
         </Popup>
         <div class="row justify-content-center">
             <div class="card col-md-10 mb-4">
-                <form @submit.prevent="savePost" enctype="multipart/form-data" class="card-body">
+                <form @submit.prevent="savePost" class="card-body">
                     <Input
                         v-model="post.title"
                         name="title"
@@ -47,13 +47,14 @@
                             class="row justify-content-center mt-3"
                         >
                             <PostImg
-                                :content_value="body_content.value"
+                                :content_src="body_content.src"
                                 :index="index"
                             />
                             <div class="col-md-6">
-                                <Input
+                                <InputImg
                                     @change="onFileChange"
                                     type="file"
+                                    v-model="body_content.value"
                                     :name="`images[${index}]`"
                                     :required="true"
                                 />
@@ -86,6 +87,7 @@ import Select from '../components/Select.vue';
 import TextArea from '../components/TextArea.vue';
 import Popup from '../components/Popup.vue';
 import PostImg from '../components/PostImg.vue';
+import InputImg from '../components/InputImg.vue';
 
 export default {
     data() {
@@ -107,7 +109,8 @@ export default {
         Popup,
         TextArea,
         Select,
-        PostImg
+        PostImg,
+        InputImg
     },
     methods: {
         toggleAddContentPopup() {
@@ -126,7 +129,7 @@ export default {
             const file = ev.target.files[0];
             const name = ev.target.attributes.name.value;
             const index = this.getIndexFromArrayString(name);
-            this.post.body[index].value = URL.createObjectURL(file);
+            this.post.body[index].src = URL.createObjectURL(file);
             URL.revokeObjectURL(file);
         },
         getIndexFromArrayString(string) {

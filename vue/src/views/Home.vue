@@ -5,7 +5,7 @@
             :key="post.body[0].value"
             v-model="posts[index]"
         >
-            <hr v-if="posts[++index]">
+            <hr v-if="posts[index + 1]">
         </Post>
     </div>
 </template>

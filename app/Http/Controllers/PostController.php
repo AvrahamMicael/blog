@@ -34,12 +34,9 @@ class PostController extends Controller
         abort_if($req->user()->role != Role::ADMIN, 401);
 
         $post = Post::create($req->all());
-        $post->body()
-            ->createMany($req->body);
+        $post->saveBody($req);
 
-        $post = Post::with('body')->find($post->id);
-
-        return response($post, 200);
+        return response($post, 201);
     }
 
     /**
