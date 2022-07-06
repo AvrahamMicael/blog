@@ -49,16 +49,18 @@ export default {
     props: ['modelValue'],
     methods: {
         deletePost(post) {
-            //delete
+            this.$store.dispatch('deletePost', post);
+        },
+        formatDate() {
+            const date = new Date(this.post.created_at);
+            this.post.created_at = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
         }
     },
     computed: {
-        ...mapState(['user'])
+        ...mapState(['user']),
     },
     mounted() {
-        const date = new Date(this.post.created_at);
-        this.post.created_at = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
-        // this.post.created_at = this.post.created_at.split(' ', 1).join();
+        this.formatDate();
         if(this.$route.name == 'Home')
         {
             this.post.body[0].value = this.post.body[0].value.split(' ', 30).join(' ') + '...';

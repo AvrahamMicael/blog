@@ -47,9 +47,26 @@ const store = createStore({
     },
     getters: {},
     actions: {
+        getPosts({ commit }) {
+            commit('toggleLoader');
+            return axiosClient.get('/post')
+                .then(( { data } ) => {
+                    commit('setPosts', data.data);
+                })
+                .finally(() => commit('toggleLoader'));
+        },
+        deletePost({ commit }, post) {
+            commit('toggleLoader');
+            return axiosClient.delete(`/post/${post.id}`)
+                .then(() => {
+                    commit('deletePost', post);
+                })
+                .catch(error => console.log(error))
+                .finally(() => commit('toggleLoader'));
+        },
         async submitAuthForm({ commit }, user) {
             let auth_errors = {};
-            this.commit('toggleLoader');
+            commit('toggleLoader');
 
             await axiosClient.post(`/${this.state.popup}`, user)
                 .then(( { data } ) => {
@@ -58,11 +75,11 @@ const store = createStore({
                     return data;
                 })
                 .catch(error => auth_errors = error.response.data.errors)
-                .finally(() => this.commit('toggleLoader'));
+                .finally(() => commit('toggleLoader'));
             return auth_errors;
         },
         async savePost({ commit }, post) {
-            this.commit('toggleLoader');
+            commit('toggleLoader');
             let response;
             const fd = new FormData();
             fd.append('title', post.title);
@@ -89,20 +106,28 @@ const store = createStore({
                         return res;
                     });
             }
-            this.commit('toggleLoader');
+            commit('toggleLoader');
             return response;
         },
         logout({ commit }) {
-            this.commit('toggleLoader');
+            commit('toggleLoader');
             return axiosClient.post('/logout')
                 .then(res => {
                     commit('logout');
                     return res;
                 })
-                .finally(() => this.commit('toggleLoader'));
+                .finally(() => commit('toggleLoader'));
         }
     },
     mutations: {
+        deletePost(state, deleted_post) {
+            state.posts = state.posts.filter(post => {
+                return deleted_post.id != post.id;
+            });
+        },
+        setPosts(state, posts) {
+            state.posts = posts;
+        },
         toggleLoader(state) {
             state.loader = !state.loader;
         },

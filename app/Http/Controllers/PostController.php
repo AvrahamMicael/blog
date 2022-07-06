@@ -18,9 +18,9 @@ class PostController extends Controller
      */
     public function index(Request $req)
     {
-        return PostResource::collection(
-            Post::orderBy('created_at')->paginate()
-        );
+        return Post::with('body')
+            ->orderBy('created_at', 'desc')
+            ->paginate();
     }
 
     /**
