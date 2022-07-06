@@ -1,5 +1,5 @@
 <template>
-    <form @submit.prevent="login" id="form-login">
+    <form @submit.prevent="submitAuthForm">
         <label for="email">Email:</label>
         <input v-model="user.email" type="email" required name="email" id="email" class="form-control">
         <label for="password">Password:</label>
@@ -30,17 +30,12 @@ export default {
     components: {
         AuthButton,
         Checkbox,
-        AuthErrorsList
+        AuthErrorsList,
     },
     methods: {
-        login() {
-            auth_button.disabled = true;
-            this.$store.dispatch('login', this.user)
-                .catch(error => {
-                    this.errors = error.response.data.errors;
-                });
-            auth_button.disabled = false;
-        }
-    }
+        async submitAuthForm() {
+            this.errors = await this.$store.dispatch('submitAuthForm', this.user);
+        },
+    },
 };
 </script>

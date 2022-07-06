@@ -27,7 +27,6 @@
                 <form @submit.prevent="savePost" class="card-body">
                     <Input
                         v-model="post.title"
-                        name="title"
                         label="title"
                         :required="true"
                     />

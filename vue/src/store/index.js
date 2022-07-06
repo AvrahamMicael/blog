@@ -42,27 +42,27 @@ const store = createStore({
             token: JSON.parse(sessionStorage.getItem('user.token'))
         },
         popup: null,
+        loader: false,
         posts: [...tempPosts]
     },
     getters: {},
     actions: {
-        login({ commit }, user) {
-            return axiosClient.post('/login', user)
+        async submitAuthForm({ commit }, user) {
+            let auth_errors = {};
+            this.commit('toggleLoader');
+
+            await axiosClient.post(`/${this.state.popup}`, user)
                 .then(( { data } ) => {
                     commit('changeAuthPopup', null);
                     commit('setUser', data);
                     return data;
-                });
+                })
+                .catch(error => auth_errors = error.response.data.errors)
+                .finally(() => this.commit('toggleLoader'));
+            return auth_errors;
         },
-        register({ commit }, user) {
-            return axiosClient.post('/register', user)
-                .then(( { data } ) => {
-                    commit('changeAuthPopup', null);
-                    commit('setUser', data);
-                    return data;
-                });
-        },
-        savePost({ commit }, post) {
+        async savePost({ commit }, post) {
+            this.commit('toggleLoader');
             let response;
             const fd = new FormData();
             fd.append('title', post.title);
@@ -73,7 +73,7 @@ const store = createStore({
 
             if(post.id)
             {
-                response = axiosClient
+                response = await axiosClient
                     .put(`/post/${post.id}`, fd)
                     .then(res => {
                         commit('updatePost', res.data);
@@ -82,25 +82,30 @@ const store = createStore({
             }
             else
             {
-                response = axiosClient
+                response = await axiosClient
                     .post('/post', fd)
                     .then(res => {
                         commit('savePost', res.data);
                         return res;
                     });
             }
-
+            this.commit('toggleLoader');
             return response;
         },
         logout({ commit }) {
+            this.commit('toggleLoader');
             return axiosClient.post('/logout')
                 .then(res => {
                     commit('logout');
                     return res;
-                });
+                })
+                .finally(() => this.commit('toggleLoader'));
         }
     },
     mutations: {
+        toggleLoader(state) {
+            state.loader = !state.loader;
+        },
         savePost(state, post) {
             state.posts = [...state.posts, post];
         },

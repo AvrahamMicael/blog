@@ -1,11 +1,12 @@
 <template>
     <div class="text-center mt-3">
-        <a @click="changeAuthMethod" class="mb-1 link-primary text-decoration-none small d-block" href="javascript:;">
-            <small>
-                {{ changeAuthWords }}
-            </small>
-        </a>
-
+        <div class="mb-1  d-block" href="javascript:;">
+            <a @click="changeAuthMethod" href="javascript:;" class="link-primary text-decoration-none small">
+                <small>
+                    {{ changeAuthWords }}
+                </small>
+            </a>
+        </div>
         <button id="auth_button" class="btn btn-outline-success text-capitalize">
             {{ popup }}
         </button>
@@ -16,9 +17,11 @@
 import { mapState, mapMutations } from 'vuex';
 
 export default {
+    methods: {
+        ...mapMutations(['changeAuthMethod']),
+    },
     computed: {
         ...mapState(['popup']),
-        ...mapMutations(['changeAuthMethod']),
         changeAuthWords() {
             if(this.popup == 'register')
             {

@@ -2,6 +2,7 @@
 import {mapState} from 'vuex'
 import Header from './components/Header.vue'
 import AuthPopup from './components/AuthPopup.vue'
+import Loader from './components/Loader.vue';
 
 export default {
   computed: {
@@ -9,7 +10,8 @@ export default {
   },
   components: {
     Header,
-    AuthPopup
+    AuthPopup,
+    Loader
   },
 }
 </script>
@@ -19,6 +21,9 @@ export default {
     <Header/>
     <router-view/>
     <AuthPopup v-if="popup"/>
+    <teleport to='body'>
+      <Loader/>
+    </teleport>
   </div>
 </template>
 

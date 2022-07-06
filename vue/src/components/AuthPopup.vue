@@ -10,8 +10,7 @@
                 </button>
             </div>
             <hr>
-            <RegisterForm v-if="popup == 'register'"/>
-            <LoginForm v-if="popup == 'login'"/>
+            <AuthForm/>
         </div>
     </div>
 </template>
@@ -19,7 +18,7 @@
 <script>
 import { mapMutations, mapState } from 'vuex';
 import RegisterForm from './RegisterForm.vue';
-import LoginForm from './LoginForm.vue';
+import AuthForm from './AuthForm.vue';
 
 export default {
     methods: {
@@ -30,7 +29,7 @@ export default {
     },
     components: {
         RegisterForm,
-        LoginForm
+        AuthForm
     }
 };
 </script>
