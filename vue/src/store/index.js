@@ -47,7 +47,7 @@ const store = createStore({
         posts: {
             loading: false,
             links: [],
-            data: [...tempPosts],
+            data: [],
             showedPosts: []
         },
     },
@@ -64,20 +64,18 @@ const store = createStore({
                 .finally(() => commit('toggleLoader'));
         },
         getHomePosts({ commit }) {
-            commit('toggleLoader');
             return axiosClient.get('/post')
                 .then(( { data } ) => {
                     commit('setHomePosts', data.data);
                     commit('setPostsLinks', data.links);
+                    return null;
                 })
-                .finally(() => commit('toggleLoader'));
+                .catch(( { response } ) => response.data);
         },
         deletePost({ commit }, post) {
             commit('toggleLoader');
             return axiosClient.delete(`/post/${post.id}`)
-                .then(() => {
-                    commit('deletePost', post);
-                })
+                .then(() => commit('deletePost', post))
                 .finally(() => commit('toggleLoader'));
         },
         async submitAuthForm({ commit }, user) {

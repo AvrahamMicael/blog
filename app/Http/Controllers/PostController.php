@@ -7,6 +7,7 @@ use App\Http\Requests\UpdatePostRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
 use App\Models\Role;
+use Exception;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -18,11 +19,18 @@ class PostController extends Controller
      */
     public function index(Request $req)
     {
-        $post = Post::with('body')
-            ->orderBy('created_at', 'desc')
-            ->paginate();
-        $post->getCollection()
-            ->transform(fn($i) => $i->adjustBodyImagesPaths());
+        try
+        {
+            $post = Post::with('body')
+                ->orderBy('created_at', 'desc')
+                ->paginate();
+            $post->getCollection()
+                ->transform(fn($i) => $i->adjustBodyImagesPaths());
+        }
+        catch(Exception $e)
+        {
+            return response($e->getMessage(), 500);
+        }
 
         return response($post);
     }

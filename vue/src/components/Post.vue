@@ -49,7 +49,13 @@ export default {
     props: ['modelValue'],
     methods: {
         deletePost(post) {
-            this.$store.dispatch('deletePost', post);
+            this.$store
+                .dispatch('deletePost', post)
+                .then(() => {
+                    if(this.$route.name == 'Post') this.$router.push({
+                        name: 'Home'
+                    });
+                });
         },
         formatDate() {
             const date = new Date(this.post.created_at);
