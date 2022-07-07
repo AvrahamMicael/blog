@@ -32,7 +32,6 @@ export default {
     },
     beforeCreate() {
         this.$store.dispatch('getHomePosts');
-        const obj = { test: 1, test2: 2 };
     },
 }
 </script>

@@ -17,7 +17,6 @@ const routes = [
       component: DefaultLayout,
       children: [
          { name: 'Home', path: '/', component: Home },
-         { path: '/post/', redirect: { name: 'NotFound' } },
          { name: 'Post', path: '/post/:id', component: Post }
       ]
    },
@@ -30,6 +29,10 @@ const routes = [
          { name: 'NotFound', path: '/error/404', component: NotFound }
       ]
    },
+   {
+      path: '/:catchAll(.*)*',
+      redirect: { name: 'NotFound' }
+   }
 ];
 
 const router = createRouter({

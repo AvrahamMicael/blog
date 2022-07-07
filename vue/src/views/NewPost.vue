@@ -22,61 +22,56 @@
                 </button>
             </div>
         </Popup>
-        <div class="row justify-content-center">
-            <div class="card col-md-10 mb-4">
-                <form @submit.prevent="savePost" class="card-body">
-                    <Input
-                        v-model="post.title"
-                        label="title"
-                        :required="true"
+        <form @submit.prevent="savePost">
+            <Input
+                v-model="post.title"
+                label="title"
+                :required="true"
+            />
+            <!-- <Input v-model="post.main_img" name="Main Image" type="file"/> -->
+            <div
+                v-for="(body_content, index) in post.body"
+                :key="`body-${index}`"
+            >
+                <TextArea
+                    v-if="body_content.type == 'text'"
+                    v-model="body_content.value"
+                    :name="index == 0 ? 'content' : null"
+                    :required="true"
+                />
+                <div
+                    v-else
+                    class="row justify-content-center mt-3"
+                >
+                    <PostImg
+                        :content_src="body_content.src"
+                        :index="index"
                     />
-                    <!-- <Input v-model="post.main_img" name="Main Image" type="file"/> -->
-                    <div
-                        v-for="(body_content, index) in post.body"
-                        :key="`body-${index}`"
-                    >
-                        <TextArea
-                            v-if="body_content.type == 'text'"
+                    <div class="col-md-6">
+                        <InputImg
+                            @change="onFileChange"
                             v-model="body_content.value"
-                            :name="index == 0 ? 'content' : null"
+                            :name="`images[${index}]`"
                             :required="true"
                         />
-                        <div
-                            v-else
-                            class="row justify-content-center mt-3"
-                        >
-                            <PostImg
-                                :content_src="body_content.src"
-                                :index="index"
-                            />
-                            <div class="col-md-6">
-                                <InputImg
-                                    @change="onFileChange"
-                                    type="file"
-                                    v-model="body_content.value"
-                                    :name="`images[${index}]`"
-                                    :required="true"
-                                />
-                            </div>
-                        </div>
-                        <div v-if="index != 0" class="text-end mt-2">
-                            <a href="javascript:;" @click="removeBodyContent(index)" class="btn btn-outline-danger">
-                                <i class="fa-solid fa-x"/>
-                            </a>
-                        </div>
                     </div>
-                    <div class="text-end mt-3">
-                        <a href="javascript:;" @click="toggleAddContentPopup" class="btn btn-outline-primary">
-                            <i class="fa-solid fa-plus"/>
-                        </a>
-                        &nbsp;
-                        <button class="btn btn-outline-success">
-                            <i class="fa-solid fa-check"/>
-                        </button>
-                    </div>
-                </form>
+                </div>
+                <div v-if="index != 0" class="text-end mt-2">
+                    <a href="javascript:;" @click="removeBodyContent(index)" class="btn btn-outline-danger">
+                        <i class="fa-solid fa-x"/>
+                    </a>
+                </div>
             </div>
-        </div>
+            <div class="text-end mt-3">
+                <a href="javascript:;" @click="toggleAddContentPopup" class="btn btn-outline-primary">
+                    <i class="fa-solid fa-plus"/>
+                </a>
+                &nbsp;
+                <button class="btn btn-outline-success">
+                    <i class="fa-solid fa-check"/>
+                </button>
+            </div>
+        </form>
     </section>
 </template>
 
