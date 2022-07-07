@@ -51,6 +51,7 @@ class Post extends Model
                 ? asset($i['value'])
                 : $i['value']
         ]);
+        return $this;
     }
 
     public function body()

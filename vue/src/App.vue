@@ -13,9 +13,6 @@ export default {
     AuthPopup,
     Loader
   },
-  beforeCreate() {
-    this.$store.dispatch('getPosts');
-  }
 }
 </script>
 

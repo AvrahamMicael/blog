@@ -18,9 +18,13 @@ class PostController extends Controller
      */
     public function index(Request $req)
     {
-        return Post::with('body')
+        $post = Post::with('body')
             ->orderBy('created_at', 'desc')
             ->paginate();
+        $post->getCollection()
+            ->transform(fn($i) => $i->adjustBodyImagesPaths());
+
+        return response($post);
     }
 
     /**
@@ -47,9 +51,11 @@ class PostController extends Controller
      */
     public function show(int $id)
     {
-        $post = Post::with('body')->findOrFail($id);
-        
-        return new PostResource($post);
+        return response(
+            Post::with('body')
+                ->findOrFail($id)
+                ->adjustBodyImagesPaths()
+        );
     }
 
     /**

@@ -1,5 +1,5 @@
 <template>
-    <main class="container">
+    <section>
         <Popup
             v-if="addContentPopup"
             title="Add More"
@@ -77,7 +77,7 @@
                 </form>
             </div>
         </div>
-    </main>
+    </section>
 </template>
 
 <script>

@@ -4,24 +4,31 @@ import { user, admin } from '../constants/Roles.js';
 import Home from '../views/Home.vue';
 import NewPost from '../views/NewPost.vue';
 import Post from '../views/Post.vue';
+import NotFound from '../views/NotFound.vue';
 
 import store from '../store';
 import DefaultLayout from '../components/DefaultLayout.vue'
+import OneColumnLayout from '../components/OneColumnLayout.vue'
 
 const routes = [
    {
       path: '/',
+      redirect: { name: 'Home' },
       component: DefaultLayout,
       children: [
          { name: 'Home', path: '/', component: Home },
+         { path: '/post/', redirect: { name: 'NotFound' } },
          { name: 'Post', path: '/post/:id', component: Post }
       ]
    },
    {
-      path: '/post/create',
-      name: 'NewPost',
-      component: NewPost,
-      meta: {isAdmin: true}
+      path: '/',
+      component: OneColumnLayout,
+      meta: {isAdmin: true},
+      children: [
+         { name: 'NewPost', path: '/post/create', component: NewPost},
+         { name: 'NotFound', path: '/error/404', component: NotFound }
+      ]
    },
 ];
 

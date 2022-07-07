@@ -1,6 +1,7 @@
 import { createStore } from 'vuex';
 import { user, admin } from '../constants/Roles.js';
 import axiosClient from '../axios.js';
+import axios from 'axios';
 
 const tempPosts = [
     {
@@ -43,15 +44,31 @@ const store = createStore({
         },
         popup: null,
         loader: false,
-        posts: [...tempPosts]
+        posts: {
+            loading: false,
+            links: [],
+            data: [...tempPosts],
+            showedPosts: []
+        },
     },
     getters: {},
     actions: {
-        getPosts({ commit }) {
+        showPost({ commit }, id_post) {
+            commit('toggleLoader');
+            return axiosClient.get(`/post/${id_post}`)
+                .then(( { data } ) => {
+                    commit('addPostToShowedPosts', data);
+                    return data;
+                })
+                .catch(() => null)
+                .finally(() => commit('toggleLoader'));
+        },
+        getHomePosts({ commit }) {
             commit('toggleLoader');
             return axiosClient.get('/post')
                 .then(( { data } ) => {
-                    commit('setPosts', data.data);
+                    commit('setHomePosts', data.data);
+                    commit('setPostsLinks', data.links);
                 })
                 .finally(() => commit('toggleLoader'));
         },
@@ -61,7 +78,6 @@ const store = createStore({
                 .then(() => {
                     commit('deletePost', post);
                 })
-                .catch(error => console.log(error))
                 .finally(() => commit('toggleLoader'));
         },
         async submitAuthForm({ commit }, user) {
@@ -102,7 +118,7 @@ const store = createStore({
                 response = await axiosClient
                     .post('/post', fd)
                     .then(res => {
-                        commit('savePost', res.data);
+                        commit('addPost', res.data);
                         return res;
                     });
             }
@@ -120,22 +136,37 @@ const store = createStore({
         }
     },
     mutations: {
+        setHomePosts(state, posts) {
+            state.posts.data = [...posts];
+        },
+        addPostToShowedPosts(state, showed_post) {
+            state.posts.showedPosts = [
+                ...state.posts.showedPosts,
+                showed_post
+            ];
+        },
+        setPostsLinks(state, posts_links) {
+            state.posts.links = posts_links;
+        },
         deletePost(state, deleted_post) {
-            state.posts = state.posts.filter(post => {
+            state.posts.data = state.posts.data.filter(post => {
                 return deleted_post.id != post.id;
             });
-        },
-        setPosts(state, posts) {
-            state.posts = posts;
+            state.posts.showedPosts = state.posts.showedPosts.filter(post => {
+                return deleted_post.id != post.id;
+            });
         },
         toggleLoader(state) {
             state.loader = !state.loader;
         },
-        savePost(state, post) {
-            state.posts = [...state.posts, post];
+        addPost(state, added_post) {
+            state.posts.data = [...state.posts.data, added_post];
+        },
+        addPosts(state, added_posts) {
+            state.posts.data = [...state.posts.data, ...added_posts];
         },
         updatePost(state, updated_post) {
-            state.posts = state.posts.map(post => {
+            state.posts.data = state.posts.data.map(post => {
                 if(post.id == updated_post.id)
                 {
                     return updated_post;

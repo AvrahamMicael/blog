@@ -1,20 +1,36 @@
 <template>
-    <Post v-model="post"/>
+    <Post v-if="post" v-model="post"/>
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import Post from '../components/Post.vue';
 
 export default {
+    data() {
+        return {
+            post: null
+        };
+    },
     components: {
         Post
     },
-    computed: {
-        post() {
-            return this.$store.state.posts.find(post => {
-                return post.id == parseInt(this.$route.params.id);
-            });
+    methods: {
+        async getAndSetPost() {
+            const id_post = parseInt(this.$route.params.id);
+            this.post = this.posts.data.find(post => post.id == id_post)
+                ?? this.posts.showedPosts.find(post => id_post == post.id)
+                ?? await this.$store.dispatch('showPost', id_post)
+                ?? this.$router.push({
+                    name: 'NotFound'
+                });
         }
-    }
+    },
+    computed: {
+        ...mapState(['posts'])
+    },
+    created() {
+        this.getAndSetPost();
+    },
 }
 </script>

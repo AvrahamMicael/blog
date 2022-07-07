@@ -1,12 +1,15 @@
 <template>
-    <div>
+    <div v-if="posts.data">
         <Post
-            v-for="(post, index) in posts"
+            v-for="(post, index) in posts.data"
             :key="post.body[0].value"
-            v-model="posts[index]"
+            v-model="posts.data[index]"
         >
-            <hr v-if="posts[index + 1]">
+            <hr v-if="posts.data[index + 1]">
         </Post>
+    </div>
+    <div v-else>
+        <!-- another loader -->
     </div>
 </template>
 
@@ -26,6 +29,10 @@ export default {
     },
     computed: {
         ...mapState(['posts', 'user'])
-    }
+    },
+    beforeCreate() {
+        this.$store.dispatch('getHomePosts');
+        const obj = { test: 1, test2: 2 };
+    },
 }
 </script>
