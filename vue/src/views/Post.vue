@@ -1,10 +1,12 @@
 <template>
     <Post v-if="post" v-model="post"/>
+    <SecondaryLoader v-else/>
 </template>
 
 <script>
 import { mapState } from 'vuex';
 import Post from '../components/Post.vue';
+import SecondaryLoader from '../components/SecondaryLoader.vue';
 
 export default {
     data() {
@@ -13,7 +15,8 @@ export default {
         };
     },
     components: {
-        Post
+        Post,
+        SecondaryLoader
     },
     methods: {
         async getAndSetPost() {

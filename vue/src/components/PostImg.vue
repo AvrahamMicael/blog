@@ -1,5 +1,8 @@
 <template>
-    <div v-if="content_src" class="col-12">
+    <div
+        v-if="content_src"
+        :class="classes ?? 'col-12'"
+    >
         <img
             :src="content_src"
             :alt="`content_img_${index}`"
@@ -11,6 +14,6 @@
 
 <script>
 export default {
-    props: ['content_src', 'index']
+    props: ['content_src', 'index', 'classes'],
 };
 </script>

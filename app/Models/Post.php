@@ -46,6 +46,7 @@ class Post extends Model
     public function adjustBodyImagesPaths()
     {
         $this->body->transform(fn($i) => [
+            'id' => $i->id,
             'type' => $i['type'],
             'value' => $i['type'] == 'image'
                 ? asset($i['value'])

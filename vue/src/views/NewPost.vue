@@ -28,16 +28,19 @@
                 label="title"
                 :required="true"
             />
-            <!-- <Input v-model="post.main_img" name="Main Image" type="file"/> -->
             <div
                 v-for="(body_content, index) in post.body"
                 :key="`body-${index}`"
+                @mouseenter="showUpDownArrows(index)"
+                @mouseleave="closeUpDownArrows(index)"
+                class="row"
             >
                 <TextArea
                     v-if="body_content.type == 'text'"
                     v-model="body_content.value"
                     :name="index == 0 ? 'content' : null"
                     :required="true"
+                    :class="getRowColClassFormat(body_content)"
                 />
                 <div
                     v-else
@@ -46,6 +49,14 @@
                     <PostImg
                         :content_src="body_content.src"
                         :index="index"
+                        :classes="getRowColClassFormat(body_content)"
+                    />
+                    <UpDownArrows
+                        v-if="
+                            body_content.src
+                            && body_content.hover
+                        "
+                        @click-arrow="clickArrow(index, $event)"
                     />
                     <div class="col-md-6">
                         <InputImg
@@ -56,6 +67,13 @@
                         />
                     </div>
                 </div>
+                <UpDownArrows
+                    v-if="
+                        body_content.type == 'text'
+                        && body_content.hover
+                    "
+                    @click-arrow="clickArrow(index, $event)"
+                />
                 <div v-if="index != 0" class="text-end mt-2">
                     <a href="javascript:;" @click="removeBodyContent(index)" class="btn btn-outline-danger">
                         <i class="fa-solid fa-x"/>
@@ -82,6 +100,7 @@ import TextArea from '../components/TextArea.vue';
 import Popup from '../components/Popup.vue';
 import PostImg from '../components/PostImg.vue';
 import InputImg from '../components/InputImg.vue';
+import UpDownArrows from '../components/UpDownArrows.vue';
 
 export default {
     data() {
@@ -90,12 +109,11 @@ export default {
                 title: '',
                 body: [{
                     type: 'text',
-                    value: ''
+                    value: '',
                 }],
-                // main_img: 
             },
             addContentPopup: false,
-            new_content_type: 'text'
+            new_content_type: 'text',
         };
     },
     components: {
@@ -104,9 +122,37 @@ export default {
         TextArea,
         Select,
         PostImg,
-        InputImg
+        InputImg,
+        UpDownArrows
     },
     methods: {
+        clickArrow(index, arrowValue) {
+            const otherContentIndex = index + arrowValue;
+            const canChange = ! [0, this.post.body.length].includes(otherContentIndex);
+            if(canChange)
+            {
+                [
+                    this.post.body[index],
+                    this.post.body[otherContentIndex]
+                ] = [
+                    this.post.body[otherContentIndex],
+                    this.post.body[index]
+                ];
+            }
+        },
+        getRowColClassFormat(body_content) {
+            return body_content.hover
+                ? 'col-11'
+                : 'col-12';
+        },
+        showUpDownArrows(content_index) {
+            if(content_index > 0) 
+                this.post.body[content_index].hover = true;
+        },
+        closeUpDownArrows(content_index) {
+            if(content_index > 0) 
+                delete this.post.body[content_index].hover;
+        },
         toggleAddContentPopup() {
             this.addContentPopup = !this.addContentPopup;
         },
@@ -139,6 +185,6 @@ export default {
                     });
                 });
         }
-    }
+    },
 };
 </script>

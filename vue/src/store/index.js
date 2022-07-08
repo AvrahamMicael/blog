@@ -48,20 +48,20 @@ const store = createStore({
             loading: false,
             links: [],
             data: [],
-            showedPosts: []
+            showedPosts: sessionStorage.showedPosts
+                ? [...JSON.parse(sessionStorage.showedPosts)]
+                : []
         },
     },
     getters: {},
     actions: {
         showPost({ commit }, id_post) {
-            commit('toggleLoader');
             return axiosClient.get(`/post/${id_post}`)
                 .then(( { data } ) => {
                     commit('addPostToShowedPosts', data);
                     return data;
                 })
-                .catch(() => null)
-                .finally(() => commit('toggleLoader'));
+                .catch(() => null);
         },
         getHomePosts({ commit }) {
             return axiosClient.get('/post')
@@ -142,6 +142,7 @@ const store = createStore({
                 ...state.posts.showedPosts,
                 showed_post
             ];
+            sessionStorage.showedPosts = JSON.stringify(state.posts.showedPosts);
         },
         setPostsLinks(state, posts_links) {
             state.posts.links = posts_links;
