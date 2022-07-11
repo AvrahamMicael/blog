@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
-use App\Http\Resources\PostResource;
 use App\Models\Post;
 use App\Models\Role;
 use Exception;
@@ -17,14 +16,17 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $req)
+    public function index()
     {
         try
         {
-            $post = Post::with('body')
+            $posts = Post::with('body')
                 ->orderBy('created_at', 'desc')
                 ->paginate();
-            $post->getCollection()
+
+            if(!$posts->first()) throw new Exception('Posts not found!');
+
+            $posts->getCollection()
                 ->transform(fn($i) => $i->adjustBodyImagesPaths());
         }
         catch(Exception $e)
@@ -32,7 +34,7 @@ class PostController extends Controller
             return response($e->getMessage(), 500);
         }
 
-        return response($post);
+        return response($posts);
     }
 
     /**
@@ -77,8 +79,10 @@ class PostController extends Controller
     {
         abort_if($req->user()->role != Role::ADMIN, 401);
 
-        $post->update($req->all());
-        return new PostResource($post);
+        $post->updateBody($req)->update($req->all());
+        $post->body;
+        $post->adjustBodyImagesPaths();
+        return response($post);
     }
 
     /**
@@ -91,7 +95,7 @@ class PostController extends Controller
     {
         abort_if($req->user()->role != Role::ADMIN, 401);
 
-        $post->delete();
+        $post->deleteImages()->delete();
         return response('', 204);
     }
 }

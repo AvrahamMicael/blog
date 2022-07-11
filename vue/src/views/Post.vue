@@ -4,9 +4,9 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import Post from '../components/Post.vue';
 import SecondaryLoader from '../components/SecondaryLoader.vue';
+import { checkIfIdIsNumberAndTryToGetThePost } from '../common-functions.js';
 
 export default {
     data() {
@@ -20,17 +20,8 @@ export default {
     },
     methods: {
         async getAndSetPost() {
-            const id_post = parseInt(this.$route.params.id);
-            this.post = this.posts.data.find(post => post.id == id_post)
-                ?? this.posts.showedPosts.find(post => id_post == post.id)
-                ?? await this.$store.dispatch('showPost', id_post)
-                ?? this.$router.push({
-                    name: 'NotFound'
-                });
+            this.post = await checkIfIdIsNumberAndTryToGetThePost(this.$route.params.id);
         }
-    },
-    computed: {
-        ...mapState(['posts'])
     },
     created() {
         this.getAndSetPost();

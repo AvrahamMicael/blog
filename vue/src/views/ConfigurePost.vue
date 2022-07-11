@@ -63,7 +63,7 @@
                             @change="onFileChange"
                             v-model="body_content.value"
                             :name="`images[${index}]`"
-                            :required="true"
+                            :required="!body_content.id"
                         />
                     </div>
                 </div>
@@ -94,6 +94,7 @@
 </template>
 
 <script>
+import { checkIfIdIsNumberAndTryToGetThePost } from '../common-functions.js';
 import Input from '../components/Input.vue';
 import Select from '../components/Select.vue';
 import TextArea from '../components/TextArea.vue';
@@ -102,19 +103,25 @@ import PostImg from '../components/PostImg.vue';
 import InputImg from '../components/InputImg.vue';
 import UpDownArrows from '../components/UpDownArrows.vue';
 
+const initialState = () => ({
+    post: {
+        title: '',
+        body: [{
+            type: 'text',
+            value: '',
+        }],
+    },
+    addContentPopup: false,
+    new_content_type: 'text',
+});
+
 export default {
-    data() {
-        return {
-            post: {
-                title: '',
-                body: [{
-                    type: 'text',
-                    value: '',
-                }],
-            },
-            addContentPopup: false,
-            new_content_type: 'text',
-        };
+    data: () => initialState(),
+    watch: {
+        $route(to, from) {
+            if(from.name == 'EditPost')
+                Object.assign(this.$data, initialState());
+        }
     },
     components: {
         Input,
@@ -178,12 +185,26 @@ export default {
         savePost() {
             this.$store
                 .dispatch('savePost', this.post)
-                .then(res => {
+                .then(post => {
                     this.$router.push({
                         name: 'Post',
-                        params: { id: res.data.id }
+                        params: { id: post.id }
                     });
                 });
+        }
+    },
+    async created() {
+        if(this.$route.name == 'EditPost')
+        {
+            this.post = await checkIfIdIsNumberAndTryToGetThePost(this.$route.params.id);
+            this.post.body.forEach(body_content => {
+                if(body_content.type == 'image')
+                {
+                    body_content.src = body_content.value;
+                    body_content.value = '';
+                }
+                return body_content;
+            });
         }
     },
 };

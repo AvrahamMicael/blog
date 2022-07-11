@@ -12,6 +12,7 @@ class PostContent extends Model
     protected $fillable = [
         'type',
         'value',
-        'id_post'
+        'id_post',
+        'order'
     ];
 }

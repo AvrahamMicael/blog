@@ -4,13 +4,22 @@
             <h2 class="col-8">{{ post.title }}</h2>
             <small class="col-4 text-end my-auto">
                 {{ post.created_at }}
-                <button
-                    v-if="user.data.role == admin"
-                    @click="deletePost(post)"
-                    class="btn btn-sm btn-outline-danger"
-                >
-                    <i class="fa-solid fa-x"/>
-                </button>
+                <span v-if="user.data.role == admin">
+                    &nbsp;
+                    <router-link
+                        :to="{ name: 'EditPost', params: { id: post.id } }"
+                        class="btn btn-sm btn-outline-primary"
+                    >
+                        <i class="fas fa-edit"/>
+                    </router-link>
+                    &nbsp;
+                    <button
+                        @click="deletePost(post)"
+                        class="btn btn-sm btn-outline-danger"
+                    >
+                        <i class="fa-solid fa-x"/>
+                    </button>
+                </span>
             </small>
         </div>
         <p v-if="$route.name == 'Home'">

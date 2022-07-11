@@ -45,7 +45,6 @@ const store = createStore({
         popup: null,
         loader: false,
         posts: {
-            loading: false,
             links: [],
             data: [],
             showedPosts: sessionStorage.showedPosts
@@ -70,7 +69,7 @@ const store = createStore({
                     commit('setPostsLinks', data.links);
                     return null;
                 })
-                .catch(( { response } ) => response.data);
+                .catch(( { response } ) => response.data ?? 'Connection Error.');
         },
         deletePost({ commit }, post) {
             commit('toggleLoader');
@@ -100,24 +99,32 @@ const store = createStore({
             post.body.forEach(( body_content, index ) => {
                 fd.append(`body[${index}][type]`, body_content.type);
                 fd.append(`body[${index}][value]`, body_content.value);
+                if(post.id && body_content.id)
+                {
+                    fd.append(`body[${index}][id]`, body_content.id);
+                }
             });
-
+            
             if(post.id)
             {
+                fd.append('id', post.id);
+                fd.append('_method', 'PUT');
+
                 response = await axiosClient
-                    .put(`/post/${post.id}`, fd)
-                    .then(res => {
-                        commit('updatePost', res.data);
-                        return res;
-                    });
+                    .post(`/post/${post.id}`, fd)
+                    .then(( { data } ) => {
+                        commit('updatePost', data);
+                        return data;
+                    })
+                    .catch(response => console.log('error', response));
             }
             else
             {
                 response = await axiosClient
                     .post('/post', fd)
-                    .then(res => {
-                        commit('addPost', res.data);
-                        return res;
+                    .then(( { data } ) => {
+                        commit('addPost', data);
+                        return data;
                     });
             }
             commit('toggleLoader');
@@ -165,14 +172,11 @@ const store = createStore({
             state.posts.data = [...state.posts.data, ...added_posts];
         },
         updatePost(state, updated_post) {
-            state.posts.data = state.posts.data.map(post => {
-                if(post.id == updated_post.id)
-                {
-                    return updated_post;
-                }
-
-                return post;
-            });
+            let showed_posts = sessionStorage.showedPosts
+                ? JSON.parse(sessionStorage.showedPosts).filter(post => post.id != updated_post.id)
+                : [];
+            state.posts.showedPosts = [...showed_posts, updated_post];
+            sessionStorage.showedPosts = JSON.stringify(state.posts.showedPosts);
         },
         setUser(state, res) {
             sessionStorage.setItem('user.token', JSON.stringify(res.token));

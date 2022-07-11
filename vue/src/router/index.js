@@ -1,14 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { user, admin } from '../constants/Roles.js';
 
+//layouts
+import DefaultLayout from '../components/DefaultLayout.vue'
+import OneColumnLayout from '../components/OneColumnLayout.vue'
+
+//views
 import Home from '../views/Home.vue';
-import NewPost from '../views/NewPost.vue';
+import ConfigurePost from '../views/ConfigurePost.vue';
 import Post from '../views/Post.vue';
 import NotFound from '../views/NotFound.vue';
 
 import store from '../store';
-import DefaultLayout from '../components/DefaultLayout.vue'
-import OneColumnLayout from '../components/OneColumnLayout.vue'
 
 const routes = [
    {
@@ -25,7 +28,8 @@ const routes = [
       component: OneColumnLayout,
       meta: {isAdmin: true},
       children: [
-         { name: 'NewPost', path: '/post/create', component: NewPost},
+         { name: 'NewPost', path: '/post/create', component: ConfigurePost},
+         { name: 'EditPost', path: '/post/:id/edit', component: ConfigurePost},
          { name: 'NotFound', path: '/error/404', component: NotFound }
       ]
    },
