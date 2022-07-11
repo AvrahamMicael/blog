@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\PostImageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,3 +29,5 @@ Route::middleware('auth:sanctum')
     ->except(['index', 'show']);
 Route::apiResource('post', PostController::class)
     ->only(['index', 'show']);
+
+Route::get('/img/{id}', [PostImageController::class, 'show'])->name('post.image');

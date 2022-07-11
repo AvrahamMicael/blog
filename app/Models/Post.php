@@ -27,14 +27,6 @@ class Post extends Model
             : $item['value'];
     }
 
-    // private function getImageLinkFromStorage()
-    // {
-    //     $file = Storage::files();
-    //     $filepath = config('filesystems.disks.temp.root')."/$file";
-    //     $filepath = public_path($file);
-    //     return response()->file($filepath);
-    // }
-
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
@@ -97,7 +89,7 @@ class Post extends Model
             'id' => $i->id,
             'type' => $i['type'],
             'value' => $i['type'] == 'image'
-                ? asset('storage/'.$i['value'])
+                ? route('post.image', $i->id)
                 : $i['value']
         ]);
         return $this;
