@@ -62,8 +62,10 @@ const store = createStore({
                 })
                 .catch(() => null);
         },
-        getHomePosts({ commit }) {
-            return axiosClient.get('/post')
+        getHomePosts({ commit, state }, url = null) {
+            url = url || '/post';
+            state.posts.data = [];
+            return axiosClient.get(url)
                 .then(( { data } ) => {
                     commit('setHomePosts', data.data);
                     commit('setPostsLinks', data.links);

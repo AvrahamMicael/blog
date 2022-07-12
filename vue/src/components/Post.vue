@@ -58,13 +58,17 @@ export default {
     props: ['modelValue'],
     methods: {
         deletePost(post) {
-            this.$store
-                .dispatch('deletePost', post)
-                .then(() => {
-                    if(this.$route.name == 'Post') this.$router.push({
-                        name: 'Home'
-                    });
-                });
+            confirm('Are you sure? This action cannot be undone.')
+            {
+                this.$store
+                    .dispatch('deletePost', post)
+                    .then(() => {
+                        if(this.$route.name == 'Post') this.$router.push({
+                            name: 'Home'
+                        });
+                    })
+                    .catch(() => alert("The post couldn't be deleted."));
+            }
         },
         formatDate() {
             const date = new Date(this.post.created_at);

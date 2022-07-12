@@ -7,6 +7,22 @@
         >
             <hr v-if="posts.data[index + 1]">
         </Post>
+        <div v-if="posts.links.length > 3" class="d-flex justify-content-center">
+            <div class="btn-group" role="group">
+                <a
+                    v-for="link in posts.links" :key="link.label"
+                    :disabled="!link.url"
+                    v-html="link.label"
+                    @click="getForPage(link)"
+                    class="btn btn-outline-dark"
+                    :class="[
+                        !link.url || link.active
+                            ? 'disabled'
+                            : null
+                    ]"
+                />
+            </div>
+        </div>
     </div>
     <SecondaryLoader v-else-if="!error"/>
     <DisplayError v-else :error="error"/>
@@ -28,6 +44,14 @@ export default {
         Post,
         SecondaryLoader,
         DisplayError
+    },
+    methods: {
+        getForPage(link) {
+            if(!link.url || link.active) 
+                return;
+            
+            this.$store.dispatch('getHomePosts', link.url);
+        },
     },
     computed: {
         ...mapState(['posts', 'user'])
