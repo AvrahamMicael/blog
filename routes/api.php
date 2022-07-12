@@ -30,4 +30,6 @@ Route::middleware('auth:sanctum')
 Route::apiResource('post', PostController::class)
     ->only(['index', 'show']);
 
-Route::get('/img/{id}', [PostImageController::class, 'show'])->name('post.image');
+Route::get('/img/{file}', [PostImageController::class, 'show'])
+    ->where(['file' => '.*'])
+    ->name('post.image');

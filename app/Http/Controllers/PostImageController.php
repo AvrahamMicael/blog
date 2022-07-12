@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PostContent;
+use Illuminate\Support\Facades\Storage;
 
 class PostImageController extends Controller
 {
-    public function show(int $id_image)
+    public function show(string $filename)
     {
-        $file_name = PostContent::select('value')
-            ->findOrFail($id_image)
-            ->value;
-        $filepath = storage_path("app/public/$file_name");
+        abort_if(Storage::missing($filename), 404);
+        $filepath = storage_path("app/public/$filename");
         return response()->file($filepath);
     }
 }

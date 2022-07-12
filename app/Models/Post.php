@@ -89,7 +89,7 @@ class Post extends Model
             'id' => $i->id,
             'type' => $i['type'],
             'value' => $i['type'] == 'image'
-                ? route('post.image', $i->id)
+                ? route('post.image', $i['value'])
                 : $i['value']
         ]);
         return $this;
