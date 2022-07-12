@@ -59,13 +59,13 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(int $id)
+    public function show(string $slug)
     {
-        return response(
-            Post::with('body')
-                ->findOrFail($id)
-                ->adjustBodyImagesPaths()
-        );
+        $post = Post::with('body')
+            ->where('slug', $slug)
+            ->first();
+        abort_if(!$post, 404);
+        return response($post->adjustBodyImagesPaths());
     }
 
     /**

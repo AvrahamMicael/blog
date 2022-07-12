@@ -20,7 +20,7 @@ const routes = [
       component: DefaultLayout,
       children: [
          { name: 'Home', path: '/', component: Home },
-         { name: 'Post', path: '/post/:id', component: Post }
+         { name: 'Post', path: '/post/:slug', component: Post }
       ]
    },
    {
@@ -29,7 +29,7 @@ const routes = [
       meta: {isAdmin: true},
       children: [
          { name: 'NewPost', path: '/post/create', component: ConfigurePost},
-         { name: 'EditPost', path: '/post/:id/edit', component: ConfigurePost},
+         { name: 'EditPost', path: '/post/:slug/edit', component: ConfigurePost},
          { name: 'NotFound', path: '/error/404', component: NotFound }
       ]
    },

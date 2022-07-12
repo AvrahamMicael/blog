@@ -94,7 +94,7 @@
 </template>
 
 <script>
-import { checkIfIdIsNumberAndTryToGetThePost } from '../common-functions.js';
+import { getPostBySlug } from '../common-functions.js';
 import Input from '../components/Input.vue';
 import Select from '../components/Select.vue';
 import TextArea from '../components/TextArea.vue';
@@ -196,7 +196,7 @@ export default {
     async created() {
         if(this.$route.name == 'EditPost')
         {
-            this.post = await checkIfIdIsNumberAndTryToGetThePost(this.$route.params.id);
+            this.post = await getPostBySlug(this.$route.params.slug);
             this.post.body.forEach(body_content => {
                 if(body_content.type == 'image')
                 {

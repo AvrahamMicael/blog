@@ -1,12 +1,23 @@
 <template>
-    <Post v-if="post" v-model="post"/>
-    <SecondaryLoader v-else/>
+    <div class="col-md-8 mb-4">
+        <main class="card mb-4">
+            <div class="card-body">
+                <Post v-if="post" v-model="post"/>
+                <SecondaryLoader v-else/>
+            </div>
+        </main>
+        <div class="card">
+            <div class="card-body">
+                another card
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
 import Post from '../components/Post.vue';
 import SecondaryLoader from '../components/SecondaryLoader.vue';
-import { checkIfIdIsNumberAndTryToGetThePost } from '../common-functions.js';
+import { getPostBySlug } from '../common-functions.js';
 
 export default {
     data() {
@@ -20,7 +31,7 @@ export default {
     },
     methods: {
         async getAndSetPost() {
-            this.post = await checkIfIdIsNumberAndTryToGetThePost(this.$route.params.id);
+            this.post = await getPostBySlug(this.$route.params.slug);
         }
     },
     created() {

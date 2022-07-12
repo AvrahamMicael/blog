@@ -1,6 +1,6 @@
 <template>
     <section class="text-center">
-        <div class="fw-bold fs-1">
+        <div class="fw-bold fs-1 link-danger">
             404 - Page not found
         </div>
         <div class="fs-5">

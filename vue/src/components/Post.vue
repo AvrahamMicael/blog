@@ -2,12 +2,12 @@
     <section class="text-decoration-none d-block link-dark">
         <div class="row">
             <h2 class="col-8">{{ post.title }}</h2>
-            <small class="col-4 text-end my-auto">
+            <small class="col-4 text-end mb-auto">
                 {{ post.created_at }}
                 <span v-if="user.data.role == admin">
                     &nbsp;
                     <router-link
-                        :to="{ name: 'EditPost', params: { id: post.id } }"
+                        :to="{ name: 'EditPost', params: { slug: post.slug } }"
                         class="btn btn-sm btn-outline-primary"
                     >
                         <i class="fas fa-edit"/>
@@ -25,7 +25,7 @@
         <p v-if="$route.name == 'Home'">
             {{ post.body[0].value }}
             <router-link
-                :to="{ name: 'Post', params: { id: post.id } }"
+                :to="{ name: 'Post', params: { slug: post.slug } }"
             >
                 Read more...
             </router-link>
