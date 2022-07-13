@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Database\Factories\PostFactory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -17,7 +16,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
-            PostFactory::class,
+            PostSeeder::class,
         ]);
     }
 }

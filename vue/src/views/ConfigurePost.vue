@@ -1,5 +1,5 @@
 <template>
-    <section>
+    <article>
         <Popup
             v-if="addContentPopup"
             title="Add More"
@@ -90,7 +90,7 @@
                 </button>
             </div>
         </form>
-    </section>
+    </article>
 </template>
 
 <script>
@@ -188,7 +188,7 @@ export default {
                 .then(post => {
                     this.$router.push({
                         name: 'Post',
-                        params: { id: post.id }
+                        params: { slug: post.slug }
                     });
                 });
         }

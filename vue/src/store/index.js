@@ -15,7 +15,7 @@ const store = createStore({
             links: [],
             data: [],
             showedPosts: sessionStorage.showedPosts
-                ? [...JSON.parse(sessionStorage.showedPosts)]
+                ? JSON.parse(sessionStorage.showedPosts)
                 : []
         },
     },
@@ -59,6 +59,25 @@ const store = createStore({
                 .catch(error => auth_errors = error.response.data.errors)
                 .finally(() => commit('toggleLoader'));
             return auth_errors;
+        },
+        async saveComment({ commit }, comment) {
+            commit('toggleLoader');
+            let response;
+            const fd = new FormData();
+            fd.append('body', comment.body);
+            fd.append('id_post', comment.id_post);
+
+            if(comment.id)
+            {
+
+            }
+            else
+            {
+                response = await axiosClient
+                    .post('/comment', fd);
+            }
+            commit('toggleLoader');
+            return response;
         },
         async savePost({ commit }, post) {
             commit('toggleLoader');
@@ -141,9 +160,7 @@ const store = createStore({
             state.posts.data = [...state.posts.data, ...added_posts];
         },
         updatePost(state, updated_post) {
-            let showed_posts = sessionStorage.showedPosts
-                ? JSON.parse(sessionStorage.showedPosts).filter(post => post.id != updated_post.id)
-                : [];
+            let showed_posts = state.posts.showed_posts.filter(post => post.id != updated_post.id);
             state.posts.showedPosts = [...showed_posts, updated_post];
             sessionStorage.showedPosts = JSON.stringify(state.posts.showedPosts);
         },

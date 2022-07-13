@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\PostImageController;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +30,11 @@ Route::middleware('auth:sanctum')
     ->except(['index', 'show']);
 Route::apiResource('post', PostController::class)
     ->only(['index', 'show']);
+
+Route::get('/comment/{id_post}', [CommentController::class, 'index']);
+Route::middleware('auth:sanctum')
+    ->apiResource('comment', CommentController::class)
+    ->except('index', 'show');
 
 Route::get('/img/{file}', [PostImageController::class, 'show'])
     ->where(['file' => '.*'])

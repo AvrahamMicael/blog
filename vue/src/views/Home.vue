@@ -11,7 +11,7 @@
                         <hr v-if="posts.data[index + 1]">
                     </Post>
                     <div v-if="posts.links.length > 3" class="d-flex justify-content-center">
-                        <div class="btn-group" role="group">
+                        <nav class="btn-group" role="group">
                             <a
                                 v-for="link in posts.links" :key="link.label"
                                 :disabled="!link.url"
@@ -24,7 +24,7 @@
                                         : null
                                 ]"
                             />
-                        </div>
+                        </nav>
                     </div>
                 </div>
                 <SecondaryLoader v-else-if="!error"/>

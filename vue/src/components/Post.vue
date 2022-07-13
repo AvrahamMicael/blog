@@ -1,5 +1,5 @@
 <template>
-    <section class="text-decoration-none d-block link-dark">
+    <article class="text-decoration-none d-block link-dark">
         <div class="row">
             <h2 class="col-8">{{ post.title }}</h2>
             <small class="col-4 text-end mb-auto">
@@ -37,13 +37,14 @@
             :content="content"
         />
         <slot></slot>
-    </section>
+    </article>
 </template>
 
 <script>
 import { mapState } from 'vuex';
 import { admin } from '../constants/Roles.js';
 import PostContent from './PostContent.vue';
+import { formatDate } from '../common-functions.js';
 
 export default {
     data() {
@@ -70,16 +71,12 @@ export default {
                     .catch(() => alert("The post couldn't be deleted."));
             }
         },
-        formatDate() {
-            const date = new Date(this.post.created_at);
-            this.post.created_at = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
-        }
     },
     computed: {
         ...mapState(['user']),
     },
     mounted() {
-        this.formatDate();
+        this.post.created_at = formatDate(this.post.created_at);
         if(this.$route.name == 'Home')
         {
             this.post.body[0].value = this.post.body[0].value.split(' ', 30).join(' ') + '...';

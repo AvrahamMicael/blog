@@ -105,4 +105,9 @@ class Post extends Model
     {
         return $this->hasMany(PostContent::class, 'id_post')->orderBy('order', 'asc');
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'id_post')->orderBy('created_at', 'desc');
+    }
 }
