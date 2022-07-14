@@ -41,4 +41,11 @@ Route::get('/img/{file}', [PostImageController::class, 'show'])
     ->where(['file' => '.*'])
     ->name('post.image');
 
-Route::apiResource('subscriber', SubscriberController::class)->except('show');
+Route::group([
+    'controller' => SubscriberController::class,
+    'prefix' => 'subscriber'
+], function() {
+    Route::get('/{id}/{secret}', 'checkIfSubscriberIsCorrect');
+    Route::delete('/{id}/{secret}', 'destroy');
+});
+Route::apiResource('subscriber', SubscriberController::class)->only('index', 'store');

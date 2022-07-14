@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import Alert from './Alert.vue'
+import Alert from './Alert.vue';
 import { mapMutations, mapState } from 'vuex';
 import SecondaryLoader from './SecondaryLoader.vue';
 import axiosClient from '../axios.js';

@@ -16,8 +16,10 @@ class SubscriberFactory extends Factory
      */
     public function definition()
     {
+        $token = bcrypt('123123123');
         return [
             'email' => $this->faker->unique()->safeEmail(),
+            'token' => $token,
         ];
     }
 }

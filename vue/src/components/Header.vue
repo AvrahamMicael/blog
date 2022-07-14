@@ -11,15 +11,18 @@
                 <a href="javascript:;" class="link-dark my-auto mx-5 d-inline-block">
                     <i class="fas fa-search"/>
                 </a>
-                <HeaderDropdownButton v-if="user.token"/>
-                <a
-                    v-else
-                    @click="changeAuthPopup('login')"
-                    href="javascript:;"
-                    class="btn btn-outline-dark btn-sm"
-                >
-                    Login
-                </a>
+
+                <div v-if="$route.name != 'SubscribedDelete'">
+                    <HeaderDropdownButton v-if="user.token"/>
+                    <a
+                        v-else
+                        @click="changeAuthPopup('login')"
+                        href="javascript:;"
+                        class="btn btn-outline-dark btn-sm"
+                    >
+                        Login
+                    </a>
+                </div>
             </div>
         </div>
     </header>

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSubscriberRequest;
 use App\Models\Subscriber;
+use App\Providers\Subscribed;
+use App\Providers\Unsubscribed;
 use Illuminate\Http\Request;
 
 class SubscriberController extends Controller
@@ -28,21 +30,29 @@ class SubscriberController extends Controller
      */
     public function store(StoreSubscriberRequest $req)
     {
-        Subscriber::create($req->all());
+        $data = $req->all();
+        $secret = Subscriber::genSecret();
+        $data['token'] = hash('sha512', $secret);
+
+        $subscriber = Subscriber::create($data);
+        $subscriber->secret = $secret;
+        Subscribed::dispatch($subscriber);
+
         cache()->increment('subscribers-count');
         return response(Subscriber::countCache(), 201);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Check the correct secret for the id
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
+     * @param  string  $secret
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function checkIfSubscriberIsCorrect(int $id, string $secret)
     {
-        //
+        Subscriber::where('token', hash('sha512', $secret))->findOrFail($id);
+        return response('', 202);
     }
 
     /**
@@ -51,8 +61,13 @@ class SubscriberController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(int $id, string $secret)
     {
-        //
+        $subscriber = Subscriber::where('token', hash('sha512', $secret))->findOrFail($id);
+        Unsubscribed::dispatch($subscriber);
+        $subscriber->delete();
+
+        cache()->decrement('subscribers-count');
+        return response('', 204);
     }
 }
