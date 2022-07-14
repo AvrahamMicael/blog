@@ -1,7 +1,7 @@
 <script>
-import {mapState} from 'vuex'
-import Header from './components/Header.vue'
-import AuthPopup from './components/AuthPopup.vue'
+import { mapState } from 'vuex';
+import Header from './components/Header.vue';
+import AuthPopup from './components/AuthPopup.vue';
 import Loader from './components/Loader.vue';
 
 export default {
@@ -13,7 +13,10 @@ export default {
     AuthPopup,
     Loader
   },
-}
+  created() {
+    this.$store.dispatch('getSubscribersNumber');
+  },
+};
 </script>
 
 <template>

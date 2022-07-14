@@ -1,7 +1,5 @@
 import { createStore } from 'vuex';
-import { user, admin } from '../constants/Roles.js';
 import axiosClient from '../axios.js';
-import axios from 'axios';
 
 const store = createStore({
     state: {
@@ -9,6 +7,7 @@ const store = createStore({
             data: JSON.parse(sessionStorage.getItem('user.data')) ?? {},
             token: JSON.parse(sessionStorage.getItem('user.token'))
         },
+        subscribers: null,
         popup: null,
         loader: false,
         posts: {
@@ -21,6 +20,11 @@ const store = createStore({
     },
     getters: {},
     actions: {
+        getSubscribersNumber({ commit }) {
+            return axiosClient.get('/subscriber')
+                .then(( { data } ) => commit('setSubscribers', data))
+                .catch(() => commit('setSubscribers', ''));
+        },
         showPost({ commit }, slug) {
             return axiosClient.get(`/post/${slug}`)
                 .then(( { data } ) => {
@@ -62,22 +66,21 @@ const store = createStore({
         },
         async saveComment({ commit }, comment) {
             commit('toggleLoader');
-            let response;
+            let promise;
             const fd = new FormData();
             fd.append('body', comment.body);
             fd.append('id_post', comment.id_post);
-
             if(comment.id)
             {
 
             }
             else
             {
-                response = await axiosClient
+                promise = axiosClient
                     .post('/comment', fd);
             }
-            commit('toggleLoader');
-            return response;
+
+            return await promise.finally(() => commit('toggleLoader'));
         },
         async savePost({ commit }, post) {
             commit('toggleLoader');
@@ -129,6 +132,9 @@ const store = createStore({
         }
     },
     mutations: {
+        setSubscribers(state, qty) {
+            state.subscribers = qty;
+        },
         setHomePosts(state, posts) {
             state.posts.data = [...posts];
         },

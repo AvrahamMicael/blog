@@ -22,6 +22,11 @@ export default {
             type: 'text',
         };
     },
-    props: ['title'],
+    props: {
+        title: {
+            required: true,
+            type: String,
+        }
+    },
 };
 </script>

@@ -25,10 +25,11 @@
                         <hr class="my-2">
                         <h5>Leave a Reply</h5>
                         
-                        <div v-if="comment.error" class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <a @click="delete comment.error" href="javascript:;" class="btn-close"/>
-                            {{ comment.error }}
-                        </div>
+                        <Alert
+                            v-if="comment.error"
+                            :content="comment.error"
+                            @toggle="delete comment.error"
+                        />
 
                         <TextArea
                             v-model="comment.body"
@@ -76,6 +77,7 @@
 import DisplayError from '../components/DisplayError.vue'
 import Post from '../components/Post.vue';
 import SecondaryLoader from '../components/SecondaryLoader.vue';
+import Alert from '../components/Alert.vue';
 import Comment from '../components/Comment.vue';
 import TextArea from '../components/TextArea.vue';
 import { getPostBySlug } from '../common-functions.js';
@@ -102,6 +104,7 @@ export default {
         }
     },
     components: {
+        Alert,
         Comment,
         DisplayError,
         Post,

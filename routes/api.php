@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\PostImageController;
+use App\Http\Controllers\SubscriberController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,3 +40,5 @@ Route::middleware('auth:sanctum')
 Route::get('/img/{file}', [PostImageController::class, 'show'])
     ->where(['file' => '.*'])
     ->name('post.image');
+
+Route::apiResource('subscriber', SubscriberController::class)->except('show');
