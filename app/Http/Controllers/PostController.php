@@ -6,6 +6,7 @@ use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
 use App\Models\Role;
+use App\Providers\NewPost;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -49,6 +50,8 @@ class PostController extends Controller
 
         $post = Post::create($req->all());
         $post->saveBody($req);
+
+        NewPost::dispatch($post);
 
         return response($post, 201);
     }

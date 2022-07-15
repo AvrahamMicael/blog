@@ -24,6 +24,9 @@ class EventServiceProvider extends ServiceProvider
         Unsubscribed::class => [
             SendEmailUnsubscribedNotification::class,
         ],
+        NewPost::class => [
+            SendEmailNewPostNotification::class,
+        ],
     ];
 
     /**
