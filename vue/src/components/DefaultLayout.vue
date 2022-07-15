@@ -5,7 +5,7 @@
             <aside class="col-md-3 mb-4">
                 <div class="card mb-4">
                     <div class="card-body">
-                        <img src="/author.jpg" alt="author" class="img-fluid rounded-circle">
+                        <Img src="/author.jpg" alt="author" classes="rounded-circle"/>
                         <p class="mb-0 mt-3 text-secondary fw-light">
                             Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio praesentium fugit consequuntur, odit exercitationem optio rem placeat quibusdam voluptatibus fuga repudiandae consequatur voluptate aliquam ea at doloremque aspernatur ipsa. Quo.
                         </p>
@@ -58,6 +58,7 @@
 </template>
 
 <script>
+import Img from './Img.vue';
 import Alert from './Alert.vue';
 import { mapMutations, mapState } from 'vuex';
 import SecondaryLoader from './SecondaryLoader.vue';
@@ -65,6 +66,7 @@ import axiosClient from '../axios.js';
 
 export default {
     components: {
+        Img,
         Alert,
         SecondaryLoader
     },

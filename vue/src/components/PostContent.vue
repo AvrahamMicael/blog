@@ -3,17 +3,24 @@
         <p v-if="content.type == 'text'">
             {{ content.value }}
         </p>
-        <img
+        <Img
             v-else
             :src="content.value"
-            alt="content_img"
-            class="img-fluid d-block mx-auto"
-        >
+            classes="d-block mx-auto"
+        />
     </div>
 </template>
 
 <script>
+import Img from './Img.vue';
+
 export default {
-    props: ['content']
+components: { Img },
+props: {
+    content: {
+        type: Object,
+        required: true,
+    },
+},
 };
 </script>

@@ -28,10 +28,10 @@
 
                         <div v-if="!user.token" class="row">
                             <div class="col-md-4">
-                                <Input v-model="comment.user_name" placeholder="Your Name"/>
+                                <Input v-model="comment.user_name" placeholder="Your Name" :required="true"/>
                             </div>
                             <div class="col-md-4">
-                                <Input v-model="comment.email" placeholder="Your Email Address" type="email"/>
+                                <Input v-model="comment.email" placeholder="Your Email Address" type="email" :required="true"/>
                             </div>
                             <div class="col-1 d-flex text-secondary"><span class="my-auto mx-auto">or</span></div>
                             <div class="col-md-3">

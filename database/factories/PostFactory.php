@@ -20,7 +20,7 @@ class PostFactory extends Factory
         $title = $this->faker->unique()->sentence();
         return [
             'title' => $title,
-            'slug' => strtolower(str_replace('.', '', str_replace(' ', '-', $title))),
+            'slug' => strtolower(str_replace(['.', ' '], ['', '-'], $title)),
         ];
     }
 
