@@ -6,6 +6,7 @@ use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Sluggable\HasSlug;
@@ -20,11 +21,30 @@ class Post extends Model
         'slug',
     ];
 
-    private function storeImgAndGetPathIfIsImg(Array $item)
+    private function storeImgAndGetPathIfIsImg(Array $item): string
     {
         return $item['type'] == 'image'
             ? $item['value']->store($this->slug)
             : $item['value'];
+    }
+
+    public static function homeCacheRemember(): LengthAwarePaginator
+    {
+        $page = request('page', 1);
+        return cache()->remember("home-$page", 60*60*24, fn() =>
+            Post::with('body')
+                ->orderBy('created_at', 'desc')
+                ->paginate()
+        );
+    }
+
+    public static function homeCacheForget(): void
+    {
+        $total_pages = (int) ceil(Post::count() / 15);
+        for($page = 1; $page <= $total_pages; $page++)
+        {
+            cache()->forget("home-$page");
+        }
     }
 
     public function getSlugOptions(): SlugOptions
@@ -34,7 +54,7 @@ class Post extends Model
         ->saveSlugsTo('slug');
     }
 
-    public function updateBody(UpdatePostRequest $req)
+    public function updateBody(UpdatePostRequest $req): Post
     {
         $this->body()->whereNotIn(
                 'id', Arr::pluck($req->body, 'id')
@@ -70,7 +90,7 @@ class Post extends Model
         return $this;
     }
 
-    public function saveBody(StorePostRequest $req)
+    public function saveBody(StorePostRequest $req): void
     {
         $contents = collect($req->body)->map(fn($i, $k) => [
             'order' => $k,
@@ -82,7 +102,7 @@ class Post extends Model
         $this->adjustBodyImagesPaths();
     }
 
-    public function adjustBodyImagesPaths()
+    public function adjustBodyImagesPaths(): Post
     {
         $this->body->transform(fn($i, $k) => [
             'order' => $k,
@@ -95,7 +115,7 @@ class Post extends Model
         return $this;
     }
 
-    public function deleteImages()
+    public function deleteImages(): Post
     {
         Storage::deleteDirectory($this->slug);
         return $this;

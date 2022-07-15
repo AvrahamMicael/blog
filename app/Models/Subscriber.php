@@ -19,7 +19,7 @@ class Subscriber extends Model
 
     public $timestamps = false;
 
-    public static function countCache(): int
+    public static function countCacheRemember(): int
     {
         return cache()->remember('subscribers-count', 60*60*24, fn() => Subscriber::count());
     }

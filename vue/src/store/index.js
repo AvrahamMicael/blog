@@ -13,9 +13,6 @@ const store = createStore({
         posts: {
             links: [],
             data: [],
-            showedPosts: sessionStorage.showedPosts
-                ? JSON.parse(sessionStorage.showedPosts)
-                : []
         },
     },
     getters: {},
@@ -24,14 +21,6 @@ const store = createStore({
             return axiosClient.get('/subscriber')
                 .then(( { data } ) => commit('setSubscribers', data))
                 .catch(() => commit('setSubscribers', ''));
-        },
-        showPost({ commit }, slug) {
-            return axiosClient.get(`/post/${slug}`)
-                .then(( { data } ) => {
-                    commit('addPostToShowedPosts', data);
-                    return data;
-                })
-                .catch(() => null);
         },
         getHomePosts({ commit, state }, url = null) {
             url = url || '/post';
@@ -109,10 +98,7 @@ const store = createStore({
 
                 response = await axiosClient
                     .post(`/post/${post.id}`, fd)
-                    .then(( { data } ) => {
-                        commit('updatePost', data);
-                        return data;
-                    })
+                    .then(( { data } ) => data)
                     .catch(response => console.log('error', response));
             }
             else
@@ -144,21 +130,11 @@ const store = createStore({
         setHomePosts(state, posts) {
             state.posts.data = [...posts];
         },
-        addPostToShowedPosts(state, showed_post) {
-            state.posts.showedPosts = [
-                ...state.posts.showedPosts,
-                showed_post
-            ];
-            sessionStorage.showedPosts = JSON.stringify(state.posts.showedPosts);
-        },
         setPostsLinks(state, posts_links) {
             state.posts.links = posts_links;
         },
         deletePost(state, deleted_post) {
             state.posts.data = state.posts.data.filter(post => {
-                return deleted_post.id != post.id;
-            });
-            state.posts.showedPosts = state.posts.showedPosts.filter(post => {
                 return deleted_post.id != post.id;
             });
         },
@@ -170,11 +146,6 @@ const store = createStore({
         },
         addPosts(state, added_posts) {
             state.posts.data = [...state.posts.data, ...added_posts];
-        },
-        updatePost(state, updated_post) {
-            let showed_posts = state.posts.showed_posts.filter(post => post.id != updated_post.id);
-            state.posts.showedPosts = [...showed_posts, updated_post];
-            sessionStorage.showedPosts = JSON.stringify(state.posts.showedPosts);
         },
         setUser(state, res) {
             sessionStorage.setItem('user.token', JSON.stringify(res.token));

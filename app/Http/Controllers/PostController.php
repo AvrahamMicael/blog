@@ -21,9 +21,7 @@ class PostController extends Controller
     {
         try
         {
-            $posts = Post::with('body')
-                ->orderBy('created_at', 'desc')
-                ->paginate();
+            $posts = Post::homeCacheRemember();
 
             if(!$posts->first()) throw new Exception('Posts not found!');
 
@@ -50,6 +48,7 @@ class PostController extends Controller
 
         $post = Post::create($req->all());
         $post->saveBody($req);
+        Post::homeCacheForget();
 
         NewPost::dispatch($post);
 
@@ -64,9 +63,11 @@ class PostController extends Controller
      */
     public function show(string $slug)
     {
-        $post = Post::with('body')
-            ->where('slug', $slug)
-            ->first();
+        $post = cache()->remember("post-$slug", 60*60*24, fn() => 
+            Post::with('body')
+                ->where('slug', $slug)
+                ->first()
+        );
         abort_if(!$post, 404);
         return response($post->adjustBodyImagesPaths());
     }
@@ -85,6 +86,8 @@ class PostController extends Controller
         $post->updateBody($req)->update($req->all());
         $post->body;
         $post->adjustBodyImagesPaths();
+        cache()->forget("post-$post->slug");
+        Post::homeCacheForget();
         return response($post);
     }
 
@@ -98,7 +101,9 @@ class PostController extends Controller
     {
         abort_if($req->user()->role != Role::ADMIN, 401);
 
+        cache()->forget("post-$post->slug");
         $post->deleteImages()->delete();
+        Post::homeCacheForget();
         return response('', 204);
     }
 }

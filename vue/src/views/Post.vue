@@ -174,7 +174,7 @@ export default {
     },
     async created() {
         this.post = await getPostBySlug(this.$route.params.slug);
-        this.comment.id_post = this.post.id;
+        this.comment.id_post = this.post?.id;
     },
 };
 </script>

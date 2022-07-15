@@ -18,7 +18,7 @@ class SubscriberController extends Controller
     public function index()
     {
         return response(
-            Subscriber::countCache()
+            Subscriber::countCacheRemember()
         );
     }
 
@@ -39,7 +39,7 @@ class SubscriberController extends Controller
         Subscribed::dispatch($subscriber);
 
         cache()->increment('subscribers-count');
-        return response(Subscriber::countCache(), 201);
+        return response(Subscriber::countCacheRemember(), 201);
     }
 
     /**
