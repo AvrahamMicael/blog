@@ -67,7 +67,7 @@
                         <div v-if="comments.moreLink" class="text-center">
                             <a
                                 v-if="!comments.loading"
-                                @click="getCommentsIfOnViewport($event, true)"
+                                @click="getComments()"
                                 href="javascript:;"
                                 class="link-dark"
                             >
@@ -91,7 +91,7 @@
 </template>
 
 <script>
-import DisplayError from '../components/DisplayError.vue'
+import DisplayError from '../components/DisplayError.vue';
 import Post from '../components/Post.vue';
 import Input from '../components/Input.vue';
 import SecondaryLoader from '../components/SecondaryLoader.vue';
@@ -107,10 +107,11 @@ export default {
         return {
             post: null,
             commentFormToggled: false,
-            comment: {},
+            comment: { id_post: null },
             comments: {
                 data: [],
                 loading: false,
+                loaded: false,
                 error: null,
                 moreLink: null,
             },
@@ -118,8 +119,8 @@ export default {
     },
     watch: {
         post() {
-            this.$nextTick(this.getCommentsIfOnViewport);
-        }
+            this.$nextTick(this.getComments);
+        },
     },
     components: {
         Input,
@@ -135,15 +136,6 @@ export default {
     },
     methods: {
         ...mapMutations(['changeAuthPopup']),
-        areCommentsInViewport() {
-            if(typeof comments_card == 'undefined')
-                return null;
-            const rect = comments_card.getBoundingClientRect();
-            return rect.top >= 0
-                && rect.left >= 0
-                && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight)
-                && rect.right <= (window.innerWidth || document.documentElement.clientWidth);
-        },
         showCommentForm() {
                 this.commentFormToggled = true;
         },
@@ -160,21 +152,13 @@ export default {
                     this.addComments(data);
                     this.comment = { id_post: this.post.id };
                 })
-                .catch((res) => this.comment.error = 'Something went wrong!');
+                .catch(() => this.comment.error = 'Something went wrong!');
         },
         addComments(comments) {
             if(Array.isArray(comments)) this.comments.data.push(...comments);
             else this.comments.data.unshift(comments);
         },
-        async getCommentsIfOnViewport(ev, loadMoreComments = false) {
-            if(!loadMoreComments
-            && (this.comments.loading
-            || this.comments.loaded
-            || this.comments.error
-            || !this.areCommentsInViewport()
-            ))
-                return;
-
+        async getComments() {
             this.comments.loading = true;
 
             await axiosClient.get(this.comments.moreLink ?? `/comment/${this.post.id}`)
@@ -191,10 +175,6 @@ export default {
     async created() {
         this.post = await getPostBySlug(this.$route.params.slug);
         this.comment.id_post = this.post.id;
-        window.addEventListener('scroll', this.getCommentsIfOnViewport);
     },
-    destroyed() {
-        window.removeEventListener('scroll', this.getCommentsIfOnViewport);
-    },
-}
+};
 </script>
