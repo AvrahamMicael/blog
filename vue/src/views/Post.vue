@@ -15,7 +15,8 @@
                             Comments
                         </h4>
                         <a
-                            @click="showCommentForm"
+                            v-if="!commentFormToggled"
+                            @click="commentFormToggled = true"
                             class="btn btn-outline-dark"
                         >
                             Leave a Reply
@@ -24,11 +25,27 @@
                     <form v-if="commentFormToggled" @submit.prevent="saveComment" class="d-block my-3">
                         <hr class="my-2">
                         <h5>Leave a Reply</h5>
+
+                        <div v-if="!user.token" class="row">
+                            <div class="col-md-4">
+                                <Input v-model="comment.user_name" placeholder="Your Name"/>
+                            </div>
+                            <div class="col-md-4">
+                                <Input v-model="comment.email" placeholder="Your Email Address" type="email"/>
+                            </div>
+                            <div class="col-1 d-flex text-secondary"><span class="my-auto mx-auto">or</span></div>
+                            <div class="col-md-3">
+                                <a @click="changeAuthPopup('login')" class="btn btn-outline-secondary">
+                                    login
+                                </a>
+                            </div>
+                        </div>
                         
                         <Alert
                             v-if="comment.error"
                             :content="comment.error"
                             @toggle="delete comment.error"
+                            class="mt-3"
                         />
 
                         <TextArea
@@ -76,6 +93,7 @@
 <script>
 import DisplayError from '../components/DisplayError.vue'
 import Post from '../components/Post.vue';
+import Input from '../components/Input.vue';
 import SecondaryLoader from '../components/SecondaryLoader.vue';
 import Alert from '../components/Alert.vue';
 import Comment from '../components/Comment.vue';
@@ -104,6 +122,7 @@ export default {
         }
     },
     components: {
+        Input,
         Alert,
         Comment,
         DisplayError,
@@ -126,15 +145,22 @@ export default {
                 && rect.right <= (window.innerWidth || document.documentElement.clientWidth);
         },
         showCommentForm() {
-            if(!this.user.token) 
-                this.changeAuthPopup('login');
-            else
                 this.commentFormToggled = true;
         },
         saveComment() {
+            if(!this.user.token
+            && !this.comment.user_name
+            && !this.comment.email)
+            {
+                this.comment.error = 'You need to fill with your name and email!';
+                return;
+            }
             this.$store.dispatch('saveComment', this.comment)
-                .then(( { data } ) => this.addComments(data))
-                .catch(() => this.comment.error = 'Something went wrong!');
+                .then(( { data } ) => {
+                    this.addComments(data);
+                    this.comment = { id_post: this.post.id };
+                })
+                .catch((res) => this.comment.error = 'Something went wrong!');
         },
         addComments(comments) {
             if(Array.isArray(comments)) this.comments.data.push(...comments);

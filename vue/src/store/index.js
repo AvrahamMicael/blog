@@ -64,12 +64,18 @@ const store = createStore({
                 .finally(() => commit('toggleLoader'));
             return auth_errors;
         },
-        async saveComment({ commit }, comment) {
+        async saveComment({ commit, state }, comment) {
             commit('toggleLoader');
             let promise;
             const fd = new FormData();
             fd.append('body', comment.body);
             fd.append('id_post', comment.id_post);
+            if(!state.user.token)
+            {
+                fd.append('user_name', comment.user_name);
+                fd.append('email', comment.email);
+            }
+
             if(comment.id)
             {
 

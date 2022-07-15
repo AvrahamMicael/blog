@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCommentRequest;
 use App\Models\Post;
 use App\Models\Comment;
 use Illuminate\Http\Request;
@@ -25,13 +26,13 @@ class CommentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $req)
+    public function store(StoreCommentRequest $req)
     {
         $data = $req->all();
-        $data['id_user'] = auth()->id();
-        $data['user_name'] = auth()->user()->name;
-        $post = Post::select('id')->findOrFail($req->id_post);
-        $comment = $post->comments()->create($data);
+        $data['id_user'] = auth('sanctum')->id();
+        $data['user_name'] = optional(auth('sanctum')->user())->name ?? $req->user_name;
+        $data['email'] = optional(auth('sanctum')->user())->email ?? $req->email;
+        $comment = Comment::create($data);
         return response($comment, 201);
     }
 

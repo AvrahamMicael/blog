@@ -18,7 +18,7 @@ class CommentFactory extends Factory
     {
         return [
             'id_post' => $this->faker->numberBetween(1, 100),
-            'id_user' => $this->faker->numberBetween(2, 1000),
+            'id_user' => null,
             'user_name' => $this->faker->name(),
             'body' => $this->faker->paragraph(),
         ];

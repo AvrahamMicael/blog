@@ -32,10 +32,16 @@ Route::middleware('auth:sanctum')
 Route::apiResource('post', PostController::class)
     ->only(['index', 'show']);
 
-Route::get('/comment/{id_post}', [CommentController::class, 'index']);
+Route::group([
+    'controller' => CommentController::class,
+    'prefix' => 'comment'
+], function() {
+    Route::get('/{id_post}', 'index');
+    Route::post('/', 'store');
+});
 Route::middleware('auth:sanctum')
     ->apiResource('comment', CommentController::class)
-    ->except('index', 'show');
+    ->only('update', 'destroy');
 
 Route::get('/img/{file}', [PostImageController::class, 'show'])
     ->where(['file' => '.*'])

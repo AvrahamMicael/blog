@@ -3,9 +3,10 @@
         <label v-if="label" class="text-capitalize" :for="id">{{ label }}:</label>
         <input
             v-model="value_input"
-            :type="type ?? 'text'"
+            :type="type"
             :id="id"
-            .required="required ?? false"
+            :required="required"
+            :placeholder="placeholder"
             class="form-control"
         >
     </div>
@@ -13,7 +14,19 @@
 
 <script>
 export default {
-    props: ['label', 'type', 'modelValue', 'required'],
+    props: {
+        label: String,
+        type: {
+            type: String,
+            default: 'text',
+        },
+        modelValue: { required: true },
+        required: { default: false },
+        placeholder: {
+            type: String,
+            default: '',
+        },
+    },
     computed: {
         value_input: {
             get() {
@@ -25,8 +38,10 @@ export default {
         },
         id() {
             return this.label
-                .replace(' ', '')
-                .toLowerCase();
+                ?   this.label
+                    .replace(' ', '')
+                    .toLowerCase()
+                : null;
         }
     }
 }
