@@ -20,4 +20,9 @@ class SendEmailSubscriptionNotification
     {
         Mail::to($event->subscriber->email)->send(new SubscribedMail($event->subscriber));
     }
+
+    public function retryUntil()
+    {
+        return now()->addMinutes(10);
+    }
 }

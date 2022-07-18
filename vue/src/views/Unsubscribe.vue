@@ -64,7 +64,7 @@ export default {
     },
     computed: {
         path() {
-            return `/subscriber/${this.$route.params.id}/${this.$route.params.secret}`;
+            return `/subscriber/${this.$route.params.id}/${this.$route.params.token}`;
         },
     },
     async created() {

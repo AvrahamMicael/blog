@@ -4,7 +4,7 @@
 </p>
 <div>
     If you haven't subscribed to this, please click 
-    <a href="{{ config('app.url_front_end')."/subscriber/delete/$id/$secret" }}">
+    <a href="{{ $unsubscribe_link }}">
         this link
     </a>.
 </div>

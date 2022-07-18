@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Subscriber;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,10 +17,9 @@ class SubscriberFactory extends Factory
      */
     public function definition()
     {
-        $token = bcrypt('123123123');
         return [
             'email' => $this->faker->unique()->safeEmail(),
-            'token' => $token,
+            'token' => Subscriber::genToken(),
         ];
     }
 }

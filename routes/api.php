@@ -51,7 +51,7 @@ Route::group([
     'controller' => SubscriberController::class,
     'prefix' => 'subscriber'
 ], function() {
-    Route::get('/{id}/{secret}', 'checkIfSubscriberIsCorrect');
-    Route::delete('/{id}/{secret}', 'destroy');
+    Route::get('/{id}/{token}', 'checkIfSubscriberIsCorrect');
+    Route::delete('/{id}/{token}', 'destroy');
 });
 Route::apiResource('subscriber', SubscriberController::class)->only('index', 'store');

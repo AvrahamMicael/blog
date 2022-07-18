@@ -32,7 +32,7 @@ const routes = [
          { name: 'NewPost', path: '/post/create', component: ConfigurePost},
          { name: 'EditPost', path: '/post/:slug/edit', component: ConfigurePost},
          { name: 'NotFound', path: '/error/404', component: NotFound, meta: { isAdmin: false } },
-         { name: 'Unsubscribe', path: '/subscriber/delete/:id/:secret', component: Unsubscribe, meta: { isAdmin: false } },
+         { name: 'Unsubscribe', path: '/subscriber/delete/:id/:token', component: Unsubscribe, meta: { isAdmin: false } },
       ]
    },
    {

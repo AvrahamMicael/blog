@@ -27,3 +27,12 @@
         </a>
     </section>
 </article>
+<br>
+<div>
+    <small>
+        If you'd like to stop receiving these notifications, please click
+        <a href="{{ $unsubscribe_link }}">
+            this link
+        </a>.
+    </small>
+</div>

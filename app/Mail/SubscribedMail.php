@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class SubscribedMail extends Mailable
+class SubscribedMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -32,8 +32,7 @@ class SubscribedMail extends Mailable
         return $this->subject(config('app.name').' Subscription')
             ->view('emails.subscribed')
             ->with([
-                'id' => $this->subscriber->id,
-                'secret' => $this->subscriber->secret,
+                'unsubscribe_link' => $this->subscriber->unsubscribe_link,
             ]);
     }
 }

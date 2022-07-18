@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Mail\NewPostMail;
+use App\Models\Subscriber;
 use App\Providers\NewPost;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -18,6 +19,13 @@ class SendEmailNewPostNotification
      */
     public function handle(NewPost $event)
     {
-        Mail::to($event->subscribers)->send(new NewPostMail($event->post));
+        $event->subscribers->map(fn(Subscriber $sub) => 
+            Mail::to($sub)->send(new NewPostMail(post: $event->post, subscriber: $sub))
+        );
+    }
+
+    public function retryUntil()
+    {
+        return now()->addMinutes(10);
     }
 }

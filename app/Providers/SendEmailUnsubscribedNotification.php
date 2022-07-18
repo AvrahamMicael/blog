@@ -20,4 +20,9 @@ class SendEmailUnsubscribedNotification
     {
         Mail::to($event->subscriber->email)->send(new UnsubscribedMail);
     }
+
+    public function retryUntil()
+    {
+        return now()->addMinutes(10);
+    }
 }

@@ -31,11 +31,9 @@ class SubscriberController extends Controller
     public function store(StoreSubscriberRequest $req)
     {
         $data = $req->all();
-        $secret = Subscriber::genSecret();
-        $data['token'] = hash('sha512', $secret);
+        $data['token'] = Subscriber::genToken();
 
         $subscriber = Subscriber::create($data);
-        $subscriber->secret = $secret;
         Subscribed::dispatch($subscriber);
 
         cache()->increment('subscribers-count');
@@ -49,9 +47,9 @@ class SubscriberController extends Controller
      * @param  string  $secret
      * @return \Illuminate\Http\Response
      */
-    public function checkIfSubscriberIsCorrect(int $id, string $secret)
+    public function checkIfSubscriberIsCorrect(int $id, string $token)
     {
-        Subscriber::where('token', hash('sha512', $secret))->findOrFail($id);
+        Subscriber::where('token', $token)->findOrFail($id);
         return response('', 202);
     }
 
@@ -61,9 +59,9 @@ class SubscriberController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(int $id, string $secret)
+    public function destroy(int $id, string $token)
     {
-        $subscriber = Subscriber::where('token', hash('sha512', $secret))->findOrFail($id);
+        $subscriber = Subscriber::where('token', $token)->findOrFail($id);
         Unsubscribed::dispatch($subscriber);
         $subscriber->delete();
 
