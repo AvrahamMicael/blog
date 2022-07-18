@@ -6,7 +6,7 @@
                 <SecondaryLoader v-else/>
             </div>
         </main>
-        <div v-if="post" class="card" id="comments_card">
+        <div v-if="post" class="card">
             <div v-if="comments.loaded">
                 <section class="card-body">
                     <div class="d-flex justify-content-between">
@@ -61,8 +61,11 @@
                     <hr class="my-2">
                     <div v-if="comments.data.length">
                         <Comment
-                            v-for="comment_ in comments.data" :key="comment_.body"
+                            v-for="comment_ in comments.data" :key="comment_.id"
                             :comment="comment_"
+                            :ref="`comment-${comment_.id}`"
+                            @delete="deleteComment"
+                            @update="updateComment"
                         />
                         <div v-if="comments.moreLink" class="text-center">
                             <a
@@ -135,7 +138,38 @@ export default {
         ...mapState(['user']),
     },
     methods: {
-        ...mapMutations(['changeAuthPopup']),
+        ...mapMutations(['changeAuthPopup', 'toggleLoader']),
+        async deleteComment(d_comment) {
+            this.toggleLoader();
+
+            await axiosClient.delete(`/comment/${d_comment.id}`)
+                .then(() => {
+                    this.comments.data = this.comments.data.filter(comment => comment.id != d_comment.id);
+                })
+                .catch(() => d_comment.error = 'Something went wrong!');
+
+            this.toggleLoader();
+        },
+        async updateComment(up_comment) {
+            this.toggleLoader();
+
+            await axiosClient.put(`/comment/${up_comment.id}`, up_comment)
+                .then(() => {
+                    this.comments.data = this.comments.data.map(comment => {
+                        if(comment.id == up_comment.id)
+                            return up_comment;
+                        return comment;
+                    });
+                    const commentComponent = this.$refs[`comment-${up_comment.id}`][0];
+                    commentComponent.comment.isUpdated = true;
+                    commentComponent.toggleEditForm();
+                })
+                .catch(( { response } ) => {
+                    up_comment.error = response.statusText;
+                });
+
+            this.toggleLoader();
+        },
         showCommentForm() {
                 this.commentFormToggled = true;
         },

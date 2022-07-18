@@ -34,13 +34,13 @@ class Post extends Model
         return cache()->remember("home-$page", 60*60*24, fn() =>
             Post::with('body')
                 ->orderBy('created_at', 'desc')
-                ->paginate()
+                ->paginate(10)
         );
     }
 
     public static function homeCacheForget(): void
     {
-        $total_pages = (int) ceil(Post::count() / 15);
+        $total_pages = (int) ceil(Post::count() / 10);
         for($page = 1; $page <= $total_pages; $page++)
         {
             cache()->forget("home-$page");

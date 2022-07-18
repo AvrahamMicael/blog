@@ -15,8 +15,18 @@ export async function getPostBySlug(slug)
 
 export function formatDate(date_from_db, withHours = false) {
     const date = new Date(date_from_db);
-    let date_string = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+    let date_string = `${addZeroIfOneDigit(date.getMonth() + 1)}/${addZeroIfOneDigit(date.getDate())}/${date.getFullYear()}`;
     return withHours
-        ? `${date_string} ${date.getHours()}:${date.getMinutes()}`
+        ? `
+            ${date_string}
+            ${addZeroIfOneDigit(date.getHours())}:${addZeroIfOneDigit(date.getMinutes())}
+        `
         : date_string;
+
+    function addZeroIfOneDigit(number)
+    {
+        return number.toString().length == 1
+            ? `0${number}`
+            : number;
+    }
 }

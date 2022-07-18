@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCommentRequest;
+use App\Http\Requests\UpdateCommentRequest;
 use App\Models\Post;
 use App\Models\Comment;
 use Illuminate\Http\Request;
@@ -43,9 +44,11 @@ class CommentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateCommentRequest $req, Comment $comment)
     {
-        //
+        $this->authorize('update', $comment);
+        $comment->update($req->only('body'));
+        return response($comment);
     }
 
     /**
@@ -54,8 +57,10 @@ class CommentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Comment $comment)
     {
-        //
+        $this->authorize('delete', $comment);
+        $comment->delete();
+        return response('', 204);
     }
 }
