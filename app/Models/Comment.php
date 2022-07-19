@@ -14,6 +14,7 @@ class Comment extends Model
         'email',
         'user_name',
         'id_user',
+        'id_reply_to',
         'id_post',
     ];
 

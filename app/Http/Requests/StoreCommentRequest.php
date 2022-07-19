@@ -25,6 +25,7 @@ class StoreCommentRequest extends FormRequest
     {
         return [
             'body' => 'required|string',
+            'id_reply_to' => 'integer|numeric|min:1|exists:comments,id',
             'user_name' => 'string',
             'email' => 'email|string',
             'id_post' => 'required|integer|numeric|min:1|exists:posts,id',

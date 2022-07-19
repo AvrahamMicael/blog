@@ -6,7 +6,7 @@
                     {{ comment.user_name }}
                 </div>
                 <div class="offset-3 col-4 text-end">
-                    {{ comment.created_at }}
+                    {{ created_at }}
                 </div>
             </div>
         </div>
@@ -20,34 +20,41 @@
                 />
                 <div class="d-flex col-1">
                     <button class="my-auto btn btn-outline-success">
+                        <span class="sr-only">Submit Comment</span>
                         <i class="fa-solid fa-check"/>
                     </button>
                 </div>
             </form>
-            <p v-else class="mb-0">{{ comment.body }}</p>
+            <p v-else class="mb-0">{{ body }}</p>
         </div>
-        <div
-            v-if="
-                user.token
-                && (user.data?.id == comment.id_user
-                    && comment.id_user != null
-                    || user.data?.role == admin
-                )
-            "
-            class="card-footer text-end"
-        >
+        <div v-if="showFooter && !replying" class="card-footer text-end">
             <Alert
                 v-if="comment.error"
                 :content="comment.error"
                 @toggle="delete comment.error"
             />
-            <a @click="toggleEditForm" class="btn btn-outline-primary btn-sm">
-                <i class="fas fa-edit"/>
+
+            <a
+                v-if="!comment.id_reply_to"
+                @click="$emit('reply', comment)"
+                href="#commentForm"
+                class="btn btn-outline-dark btn-sm"
+            >
+                <span class="sr-only">Reply Comment</span>
+                <i class="fas fa-reply"/>
             </a>
-            &nbsp;
-            <a @click="$emit('delete', comment)" class="btn btn-outline-danger btn-sm">
-                <i class="fa-solid fa-x"/>
-            </a>
+            <span v-if="showUpdateDelete">
+                &nbsp;
+                <a v-if="!isDeleted" @click="toggleEditForm" class="btn btn-outline-primary btn-sm">
+                    <span class="sr-only">Edit Comment</span>
+                    <i class="fas fa-edit"/>
+                </a>
+                &nbsp;
+                <a @click="$emit('delete', comment)" class="btn btn-outline-danger btn-sm">
+                    <span class="sr-only">Delete Comment</span>
+                    <i class="fa-solid fa-x"/>
+                </a>
+            </span>
         </div>
     </div>
 </template>
@@ -68,6 +75,7 @@ export default {
     emits: [
         'update',
         'delete',
+        'reply',
     ],
     methods: {
         toggleEditForm() {
@@ -78,8 +86,30 @@ export default {
     },
     computed: {
         ...mapState(['user']),
+        created_at() {
+            return formatDate(this.comment.created_at, true);
+        },
+        isDeleted() {
+            return this.comment.body === null;;
+        },
+        body() {
+            return this.comment.body
+                ?? '[DELETED]';
+        },
         admin() {
             return admin;
+        },
+        showFooter() {
+            return !this.comment.id_reply_to
+                || this.showUpdateDelete;
+        },
+        showUpdateDelete() {
+            return this.user.token
+                && (
+                    this.user.data?.id == this.comment.id_user
+                    && this.comment.id_user != null
+                    || this.user.data?.role == admin
+                );
         },
     },
     props: {
@@ -87,9 +117,9 @@ export default {
             type: Object,
             required: true,
         },
+        replying: Boolean,
     },
     mounted() {
-        this.comment.created_at = formatDate(this.comment.created_at, true);
         this.originalCommentBody = this.comment.body;
     },
 }

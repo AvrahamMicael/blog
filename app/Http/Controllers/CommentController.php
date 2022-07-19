@@ -60,6 +60,14 @@ class CommentController extends Controller
     public function destroy(Comment $comment)
     {
         $this->authorize('delete', $comment);
+        $repliedComments = Comment::where('id_reply_to', $comment->id)->first();
+        if($repliedComments)
+        {
+            $comment->update([
+                'body' => null,
+            ]);
+            return response($comment);
+        }
         $comment->delete();
         return response('', 204);
     }

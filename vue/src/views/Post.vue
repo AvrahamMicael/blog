@@ -19,12 +19,25 @@
                             @click="commentFormToggled = true"
                             class="btn btn-outline-dark"
                         >
-                            Leave a Reply
+                            Leave a Comment
                         </a>
                     </div>
-                    <form v-if="commentFormToggled" @submit.prevent="saveComment" class="d-block my-3">
+                    <form v-if="commentFormToggled" @submit.prevent="saveComment" class="d-block my-3" id="commentForm">
                         <hr class="my-2">
-                        <h5>Leave a Reply</h5>
+                        <h5>Leave a Comment</h5>
+
+                        <div v-if="rep_comment" class="px-5 mt-2 row">
+                            <div class="col-11">
+                                <span class="fst-italic">Replying to</span>
+                                <Comment replying :comment="rep_comment"/>
+                            </div>
+                            <div class="col-1 d-flex">
+                                <a @click="removeReply" class="btn btn-outline-danger my-auto">
+                                    <span class="sr-only">Remove Reply</span>
+                                    <i class="fa-solid fa-x"/>
+                                </a>
+                            </div>
+                        </div>
 
                         <div v-if="!user.token" class="row">
                             <div class="col-md-4">
@@ -60,13 +73,24 @@
                     </form>
                     <hr class="my-2">
                     <div v-if="comments.data.length">
-                        <Comment
-                            v-for="comment_ in comments.data" :key="comment_.id"
-                            :comment="comment_"
-                            :ref="`comment-${comment_.id}`"
-                            @delete="deleteComment"
-                            @update="updateComment"
-                        />
+                        <div v-for="comment_ in comments.data" :key="comment_.id">
+                            <Comment
+                                :comment="comment_"
+                                :ref="`comment-${comment_.id}`"
+                                @delete="deleteComment"
+                                @update="updateComment"
+                                @reply="toggleReplyForm"
+                            />
+                            <div v-if="comment_.replies?.length" class="ps-5">
+                                <Comment
+                                    v-for="reply in comment_.replies" :key="reply.id"
+                                    :comment="reply"
+                                    :ref="`comment-${reply.id}`"
+                                    @delete="deleteComment"
+                                    @update="updateComment"
+                                />
+                            </div>
+                        </div>
                         <div v-if="comments.moreLink" class="text-center">
                             <a
                                 v-if="!comments.loading"
@@ -101,25 +125,24 @@ import SecondaryLoader from '../components/SecondaryLoader.vue';
 import Alert from '../components/Alert.vue';
 import Comment from '../components/Comment.vue';
 import TextArea from '../components/TextArea.vue';
-import { getPostBySlug } from '../common-functions.js';
+import { getPostBySlug, updateObjInArray } from '../common-functions.js';
 import { mapMutations, mapState } from 'vuex';
 import axiosClient from '../axios.js';
 
 export default {
-    data() {
-        return {
-            post: null,
-            commentFormToggled: false,
-            comment: { id_post: null },
-            comments: {
-                data: [],
-                loading: false,
-                loaded: false,
-                error: null,
-                moreLink: null,
-            },
-        };
-    },
+    data: () => ({
+        post: null,
+        commentFormToggled: false,
+        comment: { id_post: null },
+        rep_comment: null,
+        comments: {
+            data: [],
+            loading: false,
+            loaded: false,
+            error: null,
+            moreLink: null,
+        },
+    }),
     watch: {
         post() {
             this.$nextTick(this.getComments);
@@ -139,12 +162,31 @@ export default {
     },
     methods: {
         ...mapMutations(['changeAuthPopup', 'toggleLoader']),
+        toggleReplyForm(rep_comment) {
+            this.commentFormToggled = true;
+            this.rep_comment = rep_comment;
+            this.comment.id_reply_to = rep_comment.id;
+        },
+        removeReply() {
+            this.rep_comment = null;
+            this.comment.id_reply_to = null;
+        },
         async deleteComment(d_comment) {
             this.toggleLoader();
 
             await axiosClient.delete(`/comment/${d_comment.id}`)
-                .then(() => {
-                    this.comments.data = this.comments.data.filter(comment => comment.id != d_comment.id);
+                .then(( { data, status } ) => {
+                    if(status == 204)
+                    {
+                        this.comments.data = this.comments.data.filter(comment => {
+                            comment.replies = comment.replies.filter(c_rep => c_rep.id != d_comment.id);
+                            return comment.id != d_comment.id;
+                        });
+                    }
+                    else
+                    {
+                        this.comments.data = updateObjInArray(this.comments.data, 'id', data, true);
+                    }
                 })
                 .catch(() => d_comment.error = 'Something went wrong!');
 
@@ -155,11 +197,9 @@ export default {
 
             await axiosClient.put(`/comment/${up_comment.id}`, up_comment)
                 .then(() => {
-                    this.comments.data = this.comments.data.map(comment => {
-                        if(comment.id == up_comment.id)
-                            return up_comment;
-                        return comment;
-                    });
+                    this.comments.data = up_comment.id_reply_to
+                        ? this.updateCommentReply(this.comments.data, up_comment)
+                        : updateObjInArray(this.comments.data, 'id', up_comment);
                     const commentComponent = this.$refs[`comment-${up_comment.id}`][0];
                     commentComponent.comment.isUpdated = true;
                     commentComponent.toggleEditForm();
@@ -170,8 +210,14 @@ export default {
 
             this.toggleLoader();
         },
+        updateCommentReply(array, updated_comment) {
+            return array.map(cm => {
+                cm.replies = updateObjInArray(cm.replies, 'id', updated_comment);
+                return cm;
+            });
+        },
         showCommentForm() {
-                this.commentFormToggled = true;
+            this.commentFormToggled = true;
         },
         saveComment() {
             if(!this.user.token
@@ -185,12 +231,60 @@ export default {
                 .then(( { data } ) => {
                     this.addComments(data);
                     this.comment = { id_post: this.post.id };
+                    this.rep_comment = null;
                 })
-                .catch(() => this.comment.error = 'Something went wrong!');
+                .catch(() => {
+                    this.comment.error = 'Something went wrong!'
+                });
+        },
+        filterRepliesAndPushToComments(comments) {
+            const replies = comments.map(comm => {
+                    if(comm.id_reply_to)
+                        return comm;
+                })
+                .filter(rep => rep !== undefined);
+            const notReplies = comments.map(comm => {
+                    if(!comm.id_reply_to)
+                    {
+                        comm.replies = [];
+                        return comm;
+                    }
+                })
+                .filter(n_rep => n_rep !== undefined);
+            
+            return notReplies.map(n_rep => {
+                replies.map(rep => {
+                    if(rep.id_reply_to == n_rep.id)
+                        n_rep.replies.unshift(rep);
+                });
+                return n_rep;
+            });
         },
         addComments(comments) {
-            if(Array.isArray(comments)) this.comments.data.push(...comments);
-            else this.comments.data.unshift(comments);
+            if(Array.isArray(comments))
+            {
+                comments = this.filterRepliesAndPushToComments(comments);
+                this.comments.data.push(...comments);
+            }
+            else
+            {
+                if(comments.id_reply_to)
+                {
+                    this.comments.data = this.comments.data.map(comment => {
+                        if(comment.id == comments.id_reply_to)
+                        {
+                            comment.replies = comment.replies ?? []
+                            comment.replies.push(comments);
+                        }
+                        return comment;
+                    });
+                }
+                else
+                {
+                    comments.replies = [];
+                    this.comments.data.unshift(comments);
+                }
+            }
         },
         async getComments() {
             this.comments.loading = true;

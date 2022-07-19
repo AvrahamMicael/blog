@@ -21,11 +21,11 @@ return new class extends Migration
             $table->foreignId('id_user')
                 ->nullable()
                 ->default(null)
-                ->constrained('users')
-                ->onDelete('cascade');
+                ->constrained('users');
+            $table->bigInteger('id_reply_to')->unsigned()->nullable()->default(null);
             $table->string('user_name');
             $table->string('email');
-            $table->text('body');
+            $table->text('body')->nullable()->default(null);
             $table->timestamps();
         });
     }

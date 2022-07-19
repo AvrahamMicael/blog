@@ -31,7 +31,7 @@ const store = createStore({
                     commit('setPostsLinks', data.links);
                     return null;
                 })
-                .catch(( { response } ) => response.data ?? 'Connection Error.');
+                .catch(( { response } ) => response.statusText);
         },
         deletePost({ commit }, post) {
             commit('toggleLoader');
@@ -59,6 +59,8 @@ const store = createStore({
             const fd = new FormData();
             fd.append('body', comment.body);
             fd.append('id_post', comment.id_post);
+            if(comment.id_reply_to)
+                fd.append('id_reply_to', comment.id_reply_to);
             if(!state.user.token)
             {
                 fd.append('user_name', comment.user_name);

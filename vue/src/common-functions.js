@@ -30,3 +30,18 @@ export function formatDate(date_from_db, withHours = false) {
             : number;
     }
 }
+
+export function updateObjInArray(array, diffObjKey, updatedObj, objAssign = false) {
+    return array.map(obj => {
+        if(obj[diffObjKey] == updatedObj[diffObjKey])
+        {
+            if(objAssign)
+            {
+                Object.assign(obj, updatedObj);
+                return obj;
+            }
+            return updatedObj;
+        }
+        return obj;
+    });
+}
