@@ -37,6 +37,7 @@ Route::group([
     'prefix' => 'comment'
 ], function() {
     Route::get('/{id_post}', 'index');
+    Route::get('/', 'userComments')->middleware('auth:sanctum');
     Route::post('/', 'store');
 });
 Route::middleware('auth:sanctum')

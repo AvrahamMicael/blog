@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
-use App\Models\Post;
 use App\Models\Comment;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CommentController extends Controller
 {
@@ -17,8 +16,16 @@ class CommentController extends Controller
      */
     public function index(int $id_post)
     {
-        $comments = Comment::orderBy('created_at', 'desc')->where('id_post', $id_post)->paginate(10);
-        return response($comments);
+        return response(
+            Comment::getPostComments($id_post)
+        );
+    }
+
+    public function userComments()
+    {
+        return response(
+            Comment::getUserComments(auth()->id())
+        );
     }
 
     /**

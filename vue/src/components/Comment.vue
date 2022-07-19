@@ -4,6 +4,9 @@
             <div class="row">
                 <div class="col-5 fw-bold">
                     {{ comment.user_name }}
+                    <span v-if="comment.user_role == admin" class="badge rounded-pill bg-primary">
+                        admin
+                    </span>
                 </div>
                 <div class="offset-3 col-4 text-end">
                     {{ created_at }}
@@ -100,8 +103,11 @@ export default {
             return admin;
         },
         showFooter() {
-            return !this.comment.id_reply_to
-                || this.showUpdateDelete;
+            return !['UserComments'].includes(this.$route.name)
+                && (
+                    !this.comment.id_reply_to
+                    || this.showUpdateDelete
+                );
         },
         showUpdateDelete() {
             return this.user.token

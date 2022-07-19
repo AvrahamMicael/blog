@@ -5,8 +5,8 @@
         </a>
         <ul class="dropdown-menu dropdown-menu-end text-small">
             <li>
-                <router-link class="dropdown-item" to="#">
-                    My Profile
+                <router-link class="dropdown-item" :to="{ name: 'UserComments' }">
+                    Comments/Replies
                 </router-link>
             </li>
             <li><hr class="dropdown-divider"></li>
