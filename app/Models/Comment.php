@@ -2,35 +2,33 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use App\Abstracts\CommentPattern;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
-class Comment extends Model
+class Comment extends CommentPattern
 {
-    use HasFactory;
-
     protected $fillable = [
         'body',
         'email',
         'user_name',
         'id_user',
-        'id_reply_to',
         'id_post',
-    ];
-
-    protected $hidden = [
-        'email'
     ];
 
     public static function getPostComments(int $id_post): LengthAwarePaginator
     {
-        return DB::table('comments as c')
-            ->select('c.*', 'u.role as user_role')
-            ->join('users as u', 'u.id', '=', 'c.id_user')
-            ->where('c.id_post', $id_post)
-            ->orderBy('c.created_at', 'desc')
+        return Comment::with([
+                'user:id,role',
+                'replies' => function($q) {
+                    $q->select('id', 'body', 'created_at', 'user_name', 'id_reply_to', 'id_user');
+                },
+                'replies.user' => function($q) {
+                    $q->select('id', 'role');
+                },
+            ])
+            ->where('id_post', $id_post)
+            ->orderBy('created_at', 'desc')
             ->paginate(10);
     }
 
@@ -47,8 +45,8 @@ class Comment extends Model
             ->paginate(10);
     }
 
-    public function user()
+    public function replies()
     {
-        return $this->belongsTo(User::class, 'id_user');
+        return $this->hasMany(Reply::class, 'id_reply_to')->orderBy('created_at', 'asc');
     }
 }

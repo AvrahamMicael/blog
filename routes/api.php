@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\PostImageController;
+use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\SubscriberController;
 use Illuminate\Support\Facades\Route;
 
@@ -43,6 +44,10 @@ Route::group([
 Route::middleware('auth:sanctum')
     ->apiResource('comment', CommentController::class)
     ->only('update', 'destroy');
+    
+Route::middleware('auth:sanctum')
+    ->apiResource('reply', ReplyController::class)
+    ->except('store', 'show');
 
 Route::get('/img/{file}', [PostImageController::class, 'show'])
     ->where(['file' => '.*'])

@@ -50,7 +50,9 @@
                     </div>
                 </div>
                 <div v-else class="card">
-                    <SecondaryLoader/>
+                    <div class="card-body">
+                        <SecondaryLoader/>
+                    </div>
                 </div>
             </aside>
         </div>

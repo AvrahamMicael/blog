@@ -85,7 +85,7 @@
                                 <Comment
                                     v-for="reply in comment_.replies" :key="reply.id"
                                     :comment="reply"
-                                    :ref="`comment-${reply.id}`"
+                                    :ref="`reply-${reply.id}`"
                                     @delete="deleteComment"
                                     @update="updateComment"
                                 />
@@ -171,16 +171,28 @@ export default {
             this.rep_comment = null;
             this.comment.id_reply_to = null;
         },
+        getPathById_reply_to(comment) {
+            return comment.id_reply_to
+                ? `/reply/${comment.id}`
+                : `/comment/${comment.id}`;
+        },
         async deleteComment(d_comment) {
             this.toggleLoader();
 
-            await axiosClient.delete(`/comment/${d_comment.id}`)
+            const path = this.getPathById_reply_to(d_comment);
+
+            await axiosClient.delete(path)
                 .then(( { data, status } ) => {
                     if(status == 204)
                     {
                         this.comments.data = this.comments.data.filter(comment => {
-                            comment.replies = comment.replies.filter(c_rep => c_rep.id != d_comment.id);
-                            return comment.id != d_comment.id;
+                            if(d_comment.id_reply_to)
+                            {
+                                comment.replies = comment.replies.filter(c_rep => c_rep.id != d_comment.id);
+                            }
+                            return d_comment.id_reply_to
+                                ? true
+                                : comment.id != d_comment.id;
                         });
                     }
                     else
@@ -195,12 +207,18 @@ export default {
         async updateComment(up_comment) {
             this.toggleLoader();
 
-            await axiosClient.put(`/comment/${up_comment.id}`, up_comment)
+            const path = this.getPathById_reply_to(up_comment);
+
+            await axiosClient.put(path, up_comment)
                 .then(() => {
                     this.comments.data = up_comment.id_reply_to
                         ? this.updateCommentReply(this.comments.data, up_comment)
                         : updateObjInArray(this.comments.data, 'id', up_comment);
-                    const commentComponent = this.$refs[`comment-${up_comment.id}`][0];
+
+                    const refName = up_comment.id_reply_to
+                        ? `reply-${up_comment.id}`
+                        : `comment-${up_comment.id}`;
+                    const commentComponent = this.$refs[refName][0];
                     commentComponent.comment.isUpdated = true;
                     commentComponent.toggleEditForm();
                 })
@@ -237,33 +255,9 @@ export default {
                     this.comment.error = 'Something went wrong!'
                 });
         },
-        filterRepliesAndPushToComments(comments) {
-            const replies = comments.map(comm => {
-                    if(comm.id_reply_to)
-                        return comm;
-                })
-                .filter(rep => rep !== undefined);
-            const notReplies = comments.map(comm => {
-                    if(!comm.id_reply_to)
-                    {
-                        comm.replies = [];
-                        return comm;
-                    }
-                })
-                .filter(n_rep => n_rep !== undefined);
-            
-            return notReplies.map(n_rep => {
-                replies.map(rep => {
-                    if(rep.id_reply_to == n_rep.id)
-                        n_rep.replies.unshift(rep);
-                });
-                return n_rep;
-            });
-        },
         addComments(comments) {
             if(Array.isArray(comments))
             {
-                comments = this.filterRepliesAndPushToComments(comments);
                 this.comments.data.push(...comments);
             }
             else
@@ -273,7 +267,6 @@ export default {
                     this.comments.data = this.comments.data.map(comment => {
                         if(comment.id == comments.id_reply_to)
                         {
-                            comment.replies = comment.replies ?? []
                             comment.replies.push(comments);
                         }
                         return comment;
@@ -281,7 +274,6 @@ export default {
                 }
                 else
                 {
-                    comments.replies = [];
                     this.comments.data.unshift(comments);
                 }
             }

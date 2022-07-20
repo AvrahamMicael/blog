@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
 use App\Models\Comment;
-use Illuminate\Support\Facades\DB;
+use App\Models\Reply;
+use App\Models\Role;
 
 class CommentController extends Controller
 {
@@ -21,6 +22,11 @@ class CommentController extends Controller
         );
     }
 
+    /**
+     * Display a listing of user resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function userComments()
     {
         return response(
@@ -36,11 +42,16 @@ class CommentController extends Controller
      */
     public function store(StoreCommentRequest $req)
     {
-        $data = $req->all();
-        $data['id_user'] = auth('sanctum')->id();
-        $data['user_name'] = optional(auth('sanctum')->user())->name ?? $req->user_name;
-        $data['email'] = optional(auth('sanctum')->user())->email ?? $req->email;
-        $comment = Comment::create($data);
+        $data = Comment::getBasicDataToStore($req);
+        if($req->id_reply_to)
+        {
+            $comment = Reply::create($data);
+        }
+        else
+        {
+            $comment = Comment::create($data);
+        }
+        $comment->user->role = optional(auth('sanctum')->user())->role;
         return response($comment, 201);
     }
 
@@ -67,8 +78,9 @@ class CommentController extends Controller
     public function destroy(Comment $comment)
     {
         $this->authorize('delete', $comment);
-        $repliedComments = Comment::where('id_reply_to', $comment->id)->first();
-        if($repliedComments)
+
+        $existReplies = $comment->replies()->exists();
+        if($existReplies)
         {
             $comment->update([
                 'body' => null,

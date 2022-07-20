@@ -40,6 +40,7 @@ const routes = [
    {
       path: '/user',
       component: UserLayout,
+      meta: { isLogged: true },
       children: [
          { name: 'UserComments', path: 'comments', component: UserCommentsReplies },
          { name: 'UserReplies', path: 'replies', component: UserCommentsReplies },
@@ -59,9 +60,13 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
    if(to.meta.isAdmin
-   && store.state.user.data.role != admin)
+   && store.state.user.data.role != admin
+   || (
+      to.meta.isLogged
+      && !store.state.user.token
+   ))
    {
-      next({name: 'Home'});  /// -change later
+      next({name: 'Home'});
    }
    next();
 });

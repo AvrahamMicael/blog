@@ -37,7 +37,8 @@ export default {
             this.$store
                 .dispatch('logout')
                 .then(() => {
-                    if(this.$route.meta.isAdmin)
+                    if(this.$route.meta.isAdmin
+                    || this.$route.meta.isLogged)
                     {
                         this.$router.push({
                             name: 'Home'

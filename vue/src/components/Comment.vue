@@ -2,13 +2,13 @@
     <div class="card my-3">
         <div class="card-header">
             <div class="row">
-                <div class="col-5 fw-bold">
+                <div class="col-8 fw-bold">
                     {{ comment.user_name }}
-                    <span v-if="comment.user_role == admin" class="badge rounded-pill bg-primary">
+                    <span v-if="comment.user?.role == admin" class="badge rounded-pill bg-primary">
                         admin
                     </span>
                 </div>
-                <div class="offset-3 col-4 text-end">
+                <div class="col-4 text-end">
                     {{ created_at }}
                 </div>
             </div>
@@ -103,7 +103,7 @@ export default {
             return admin;
         },
         showFooter() {
-            return !['UserComments'].includes(this.$route.name)
+            return !['UserComments', 'UserReplies'].includes(this.$route.name)
                 && (
                     !this.comment.id_reply_to
                     || this.showUpdateDelete

@@ -61,9 +61,12 @@ export default {
         },
     }),
     watch: {
-        async $route() {
+        async $route(to) {
             Object.assign(this.$data, initialState());
-            await this.getComments();
+            if(['UserComments', 'UserReplies'].includes(to.name))
+            {
+                await this.getComments();
+            }
         },
     },
     components: {
