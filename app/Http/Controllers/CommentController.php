@@ -51,7 +51,7 @@ class CommentController extends Controller
         {
             $comment = Comment::create($data);
         }
-        $comment->user->role = optional(auth('sanctum')->user())->role;
+        $comment->user = ['role' => optional(auth('sanctum')->user())->role ?? Role::USER];
         return response($comment, 201);
     }
 

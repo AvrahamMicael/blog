@@ -82,21 +82,32 @@
                                 @reply="toggleReplyForm"
                             />
                             <div v-if="comment_.replies?.length" class="ps-5">
-                                <Comment
-                                    v-for="reply in comment_.replies" :key="reply.id"
-                                    :comment="reply"
-                                    :ref="`reply-${reply.id}`"
-                                    @delete="deleteComment"
-                                    @update="updateComment"
-                                />
+                                <div v-for="(reply, rep_index) in comment_.replies" :key="reply.id">
+                                    <Comment
+                                        v-if="comment_.showAllReplies || rep_index == 0"
+                                        :comment="reply"
+                                        :ref="`reply-${reply.id}`"
+                                        @delete="deleteComment"
+                                        @update="updateComment"
+                                    />
+                                    <div v-if="!comment_.showAllReplies && rep_index == 0 && comment_.replies[1]" class="text-center">
+                                        <a
+                                            @click="comment_.showAllReplies = true"
+                                            href="javascript:;"
+                                            class="link-dark d-inline-block pb-1 px-1 border border-secondary border-2 border-top-0"
+                                        >
+                                            Load more Replies...
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div v-if="comments.moreLink" class="text-center">
+                        <div v-if="comments.moreLink" class="text-center mt-1">
                             <a
                                 v-if="!comments.loading"
                                 @click="getComments()"
                                 href="javascript:;"
-                                class="link-dark"
+                                class="link-dark d-inline-block pb-1 px-1 border border-dark border-2 border-top-0"
                             >
                                 Load more comments...
                             </a>
@@ -249,7 +260,13 @@ export default {
                 .then(( { data } ) => {
                     this.addComments(data);
                     this.comment = { id_post: this.post.id };
-                    this.rep_comment = null;
+
+                    if(this.rep_comment)
+                    {
+                        this.rep_comment.showAllReplies = true;
+                        this.comments.data = updateObjInArray(this.comments.data, 'id', this.rep_comment);
+                        this.rep_comment = null;
+                    }
                 })
                 .catch(() => {
                     this.comment.error = 'Something went wrong!'
@@ -274,6 +291,7 @@ export default {
                 }
                 else
                 {
+                    comments.replies = [];
                     this.comments.data.unshift(comments);
                 }
             }
