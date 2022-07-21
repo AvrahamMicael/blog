@@ -14,7 +14,9 @@ class ReplyController extends Controller
      */
     public function index()
     {
-        //
+        return response(
+            Reply::getUserReplies()
+        );
     }
 
     /**

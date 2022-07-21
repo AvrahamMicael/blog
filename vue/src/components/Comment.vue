@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="col-8 fw-bold">
                     {{ comment.user_name }}
-                    <span v-if="comment.user?.role == admin" class="badge rounded-pill bg-primary">
+                    <span v-if="comment.user?.role == admin || comment.role == admin" class="badge rounded-pill bg-primary">
                         author
                     </span>
                 </div>

@@ -21,7 +21,7 @@
             class="mt-3"
         />
         <section v-else-if="!comments.data.length">
-            <h5 class="mb-0 text-muted text-center">You don't have any comment</h5>
+            <h5 class="mb-0 text-muted text-center">You don't have any comment/reply</h5>
         </section>
         <div v-if="comments.moreLink" class="text-center">
             <a
@@ -85,10 +85,19 @@ export default {
 
             await axiosClient.get(link)
                 .then(( { data } ) => {
-                    this.comments.data.push(...data.data);
-                    this.comments.moreLink = data.links.at(-1).url;
+                    if(data.data.length
+                    && data.data[0].id_reply_to
+                        ? this.$route.name == 'UserReplies'
+                        : this.$route.name == 'UserComments'
+                    )
+                    {
+                        this.comments.data.push(...data.data);
+                        this.comments.moreLink = data.links.at(-1).url;
+                    }
                 })
-                .catch(( { response } ) => this.comments.error = response.statusText);
+                .catch(( { response } ) => {
+                    this.comments.error = response.statusText
+                });
 
             this.comments.loading = false;
         },
