@@ -40,12 +40,28 @@ import { admin } from '../constants/Roles.js';
 import Post from '../components/Post.vue';
 import SecondaryLoader from '../components/SecondaryLoader.vue';
 import DisplayError from '../components/DisplayError.vue';
+import store from '../store/index.js';
+
+const initialState = () => ({
+    admin,
+    error: null,
+});
 
 export default {
     data: () => ({
         admin,
         error: null
     }),
+    watch: {
+        $route(to) {
+            if(['Home', 'Search'].includes(to.name))
+            {
+                Object.assign(this.$data, initialState());
+                this.posts.data = { data: [], links: [] };
+                this.getPagesOrError();
+            }
+        },
+    },
     components: {
         Post,
         SecondaryLoader,
@@ -56,14 +72,19 @@ export default {
             if(!link.url || link.active) 
                 return;
             
-            this.$store.dispatch('getHomePosts', link.url);
+            store.dispatch('getHomePosts', link.url);
+        },
+        async getPagesOrError() {
+            this.error = this.$route.name == 'Search'
+                ? await store.dispatch('getSearchedPosts', this.$route.params.search)
+                : await store.dispatch('getHomePosts');
         },
     },
     computed: {
         ...mapState(['posts', 'user'])
     },
     async created() {
-        this.error = await this.$store.dispatch('getHomePosts');
+        await this.getPagesOrError();
     },
 }
 </script>

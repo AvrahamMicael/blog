@@ -28,6 +28,14 @@ class Post extends Model
             : $item['value'];
     }
 
+    public static function search(string $search): LengthAwarePaginator
+    {
+        return Post::with('body')
+            ->where('title', 'like', "%$search%")
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+    }
+
     public static function homeCacheRemember(): LengthAwarePaginator
     {
         $page = request('page', 1);

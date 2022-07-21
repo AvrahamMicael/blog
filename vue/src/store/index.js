@@ -6,7 +6,7 @@ const store = createStore({
     state: {
         user: {
             data: JSON.parse(sessionStorage.getItem('user.data')) ?? {},
-            token: JSON.parse(sessionStorage.getItem('user.token'))
+            token: JSON.parse(sessionStorage.getItem('user.token')),
         },
         subscribers: null,
         popup: null,
@@ -18,6 +18,15 @@ const store = createStore({
     },
     getters: {},
     actions: {
+        async getSearchedPosts({ commit }, search = null) {
+            return await axiosClient.get(`/post/search/${search}`)
+                .then(( { data } ) => {
+                    commit('setHomePosts', data.data);
+                    commit('setPostsLinks', data.links);
+                    return null;
+                })
+                .catch(( { response } ) => response.statusText);
+        },
         async updateUser({ commit }, form_data) {
             commit('toggleLoader');
             return await axiosClient.patch('/user', form_data)

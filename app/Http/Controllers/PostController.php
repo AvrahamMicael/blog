@@ -36,6 +36,18 @@ class PostController extends Controller
         return response($posts);
     }
 
+    public function search(string $search)
+    {
+        $posts = Post::search($search);
+
+        abort_if(!$posts->first(), 404, 'Posts not found');
+        
+        $posts->getCollection()
+            ->transform(fn($i) => $i->adjustBodyImagesPaths());
+
+        return response($posts);
+    }
+
     /**
      * Store a newly created resource in storage.
      *

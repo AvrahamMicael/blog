@@ -24,7 +24,8 @@ const routes = [
       component: DefaultLayout,
       children: [
          { name: 'Home', path: '/', component: Home },
-         { name: 'Post', path: '/post/:slug', component: Post }
+         { name: 'Post', path: '/post/:slug', component: Post },
+         { name: 'Search', path: '/search/:search', component: Home },
       ]
    },
    {

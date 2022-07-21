@@ -38,6 +38,7 @@ Route::group([
     Route::delete('/', 'destroy');
 });
 
+Route::get('/post/search/{search}', [PostController::class, 'search']);
 Route::middleware('auth:sanctum')
     ->apiResource('post', PostController::class)
     ->except(['index', 'show']);

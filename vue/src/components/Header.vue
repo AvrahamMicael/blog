@@ -8,7 +8,8 @@
             <Navbar/>
 
             <div class="col-md-3 d-flex justify-content-end">
-                <a href="javascript:;" class="link-dark my-auto mx-5 d-inline-block">
+                <a @click="toggleSearchPopup" href="javascript:;" class="link-dark my-auto mx-5 d-inline-block">
+                    <span class="sr-only">Search</span>
                     <i class="fas fa-search"/>
                 </a>
 
@@ -25,24 +26,62 @@
                 </div>
             </div>
         </div>
+
+        <teleport to='body'>
+            <Popup v-if="searchPopup" title="Search" @toggle="toggleSearchPopup">
+                <form @submit.prevent="submitSearch" class="row justify-content-around">
+                    <Input
+                        v-model="search"
+                        label="search term"
+                        :type="search"
+                        class="col-10"
+                    />
+                    <div class="col-2 d-flex">
+                        <button class="btn btn-outline-success mt-auto">
+                            <span class="sr-only">Search Button</span>
+                            <i class="fas fa-search"/>
+                        </button>
+                    </div>
+                </form>
+            </Popup>
+        </teleport>
+
     </header>
 </template>
 
 <script>
+import Input from './Input.vue'
+import Popup from './Popup.vue'
 import { mapMutations, mapState } from 'vuex'
 import HeaderDropdownButton from "./HeaderDropdownButton.vue";
 import Navbar from "./Navbar.vue";
+import router from '../router';
 
 export default {
+    data: () => ({
+        searchPopup: false,
+        search: '',
+    }),
     methods: {
-        ...mapMutations(['changeAuthPopup'])
+        ...mapMutations(['changeAuthPopup']),
+        toggleSearchPopup () { 
+            this.searchPopup = !this.searchPopup;
+        },
+        submitSearch() {
+            this.toggleSearchPopup();
+            router.push({
+                name: 'Search',
+                params: { search: this.search },
+            });
+            this.search = '';
+        },
     },
     computed: {
         ...mapState(['user'])
     },
     components: {
         HeaderDropdownButton,
-        Navbar
+        Navbar, Popup, Input
     }    
 }
 </script>

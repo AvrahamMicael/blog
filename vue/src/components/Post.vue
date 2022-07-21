@@ -22,7 +22,7 @@
                 </span>
             </small>
         </div>
-        <p v-if="$route.name == 'Home'">
+        <p v-if="['Home', 'Search'].includes($route.name)">
             {{ post.body[0].value }}
             <router-link
                 :to="{ name: 'Post', params: { slug: post.slug } }"
@@ -77,7 +77,7 @@ export default {
     },
     mounted() {
         this.post.created_at = formatDate(this.post.created_at);
-        if(this.$route.name == 'Home')
+        if(['Home', 'Search'].includes(this.$route.name))
         {
             this.post.body[0].value = this.post.body[0].value.split(' ', 30).join(' ') + '...';
         }
