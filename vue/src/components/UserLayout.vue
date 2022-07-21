@@ -6,7 +6,7 @@
                     <nav class="btn-group-vertical" role="group" aria-label="">
                         <router-link :to="{ name: 'UserComments' }" class="btn btn-outline-dark" :class="getActiveClassIfCurrentRoute('UserComments')">Comments</router-link>
                         <router-link :to="{ name: 'UserReplies' }" class="btn btn-outline-dark" :class="getActiveClassIfCurrentRoute('UserReplies')">Replies</router-link>
-                        <router-link :to="{ name: '' }" class="btn btn-outline-dark" :class="getActiveClassIfCurrentRoute('')">Settings</router-link>
+                        <router-link :to="{ name: 'Settings' }" class="btn btn-outline-dark" :class="getActiveClassIfCurrentRoute('Settings')">Settings</router-link>
                     </nav>
                 </div>
             </aside>

@@ -6,6 +6,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\PostImageController;
 use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\SubscriberController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,6 +26,16 @@ Route::group([
     Route::post('/register', 'register');
     Route::post('/login', 'login');
     Route::middleware('auth:sanctum')->post('/logout', 'logout');
+    Route::middleware('auth:sanctum')->delete('/user', 'deleteUser');
+});
+
+Route::group([
+    'controller' => UserController::class,
+    'prefix' => 'user',
+    'middleware' => 'auth:sanctum',
+], function() {
+    Route::patch('/', 'update');
+    Route::delete('/', 'destroy');
 });
 
 Route::middleware('auth:sanctum')

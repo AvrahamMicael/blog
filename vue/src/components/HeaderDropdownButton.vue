@@ -6,7 +6,17 @@
         <ul class="dropdown-menu dropdown-menu-end text-small">
             <li>
                 <router-link class="dropdown-item" :to="{ name: 'UserComments' }">
-                    Comments/Replies
+                    Comments
+                </router-link>
+            </li>
+            <li>
+                <router-link class="dropdown-item" :to="{ name: 'UserReplies' }">
+                    Replies
+                </router-link>
+            </li>
+            <li>
+                <router-link class="dropdown-item" :to="{ name: 'Settings' }">
+                    Settings
                 </router-link>
             </li>
             <li><hr class="dropdown-divider"></li>

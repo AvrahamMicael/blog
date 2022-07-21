@@ -1,5 +1,6 @@
 import { createStore } from 'vuex';
 import axiosClient from '../axios.js';
+import router from './../router';
 
 const store = createStore({
     state: {
@@ -17,6 +18,21 @@ const store = createStore({
     },
     getters: {},
     actions: {
+        async updateUser({ commit }, form_data) {
+            commit('toggleLoader');
+            return await axiosClient.patch('/user', form_data)
+                .then(( { data } ) => commit('updateUser', data))
+                .finally(() => commit('toggleLoader'));
+        },
+        async deleteUser({ commit }) {
+            commit('toggleLoader');
+            return await axiosClient.delete('/user')
+                .then(() => {
+                    commit('logout');
+                    router.push({ name: 'Home' });
+                })
+                .finally(() => commit('toggleLoader'));
+        },
         getSubscribersNumber({ commit }) {
             return axiosClient.get('/subscriber')
                 .then(( { data } ) => commit('setSubscribers', data))
@@ -101,7 +117,7 @@ const store = createStore({
                 response = await axiosClient
                     .post(`/post/${post.id}`, fd)
                     .then(( { data } ) => data)
-                    .catch(response => console.log('error', response));
+                    .catch(( { response } ) => console.log(response.statusText));
             }
             else
             {
@@ -126,6 +142,10 @@ const store = createStore({
         }
     },
     mutations: {
+        updateUser(state, data) {
+            sessionStorage.setItem('user.data', JSON.stringify(data));
+            state.user.data = data;
+        },
         setSubscribers(state, qty) {
             state.subscribers = qty;
         },

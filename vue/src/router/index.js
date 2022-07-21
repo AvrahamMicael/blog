@@ -13,6 +13,7 @@ import Post from '../views/Post.vue';
 import NotFound from '../views/NotFound.vue';
 import Unsubscribe from '../views/Unsubscribe.vue';
 import UserCommentsReplies from '../views/UserCommentsReplies.vue';
+import Settings from '../views/Settings.vue';
 
 import store from '../store';
 
@@ -44,7 +45,7 @@ const routes = [
       children: [
          { name: 'UserComments', path: 'comments', component: UserCommentsReplies },
          { name: 'UserReplies', path: 'replies', component: UserCommentsReplies },
-         // { name: 'Settings', path: 'settings', component: Settings },
+         { name: 'Settings', path: 'settings', component: Settings },
       ]
    },
    {
