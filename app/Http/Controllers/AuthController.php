@@ -34,7 +34,7 @@ class AuthController extends Controller
 
     public function login(LoginRequest $req)
     {
-        $credentials = $req->except('remember');
+        $credentials = $req->only('email', 'password');
         $remember = $req->remember ?? false;
 
         if(!auth()->attempt($credentials, $remember))

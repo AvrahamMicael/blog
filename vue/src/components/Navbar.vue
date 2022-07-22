@@ -1,5 +1,5 @@
 <template>
-    <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+    <ul class="nav col-12 offset-md-2 col-md-auto mb-2 justify-content-center mb-md-0">
         <li>
             <router-link
                 :to="{ name: 'Home' }"

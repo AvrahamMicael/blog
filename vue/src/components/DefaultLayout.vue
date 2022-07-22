@@ -10,14 +10,17 @@
                             Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio praesentium fugit consequuntur, odit exercitationem optio rem placeat quibusdam voluptatibus fuga repudiandae consequatur voluptate aliquam ea at doloremque aspernatur ipsa. Quo.
                         </p>
                         <div class="d-flex justify-content-center mt-2">
-                            <span v-for="(link, index) in social_medias" :key="link.icon">
+                            <span v-for="(link, index) in social_medias" :key="link.icon" class="text-nowrap">
+
+                                <span v-if="index != 0">
+                                    &nbsp;
+                                </span>
+
                                 <a :href="link.href" class="btn btn-outline-info">
                                     <span class="sr-only">{{ link.sr_only }}</span>
                                     <i :class="link.icon"/>
                                 </a>
-                                <span v-if="index + 1 != social_medias.length">
-                                    &nbsp;
-                                </span>
+                                
                             </span>
                         </div>
                     </div>
