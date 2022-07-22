@@ -26,11 +26,18 @@
             type="password"
             :required="true"
         />
+
         <Checkbox
             v-if="popup == 'login'"
             label="Remember me"
             v-model="user.remember"
         />
+        <Checkbox
+            v-if="popup == 'register'"
+            label="Subscribe via Email"
+            v-model="user.subscribe"
+        />
+
         <AuthErrorsList v-model="errors"/>
         <AuthButton/>
     </form>
@@ -51,7 +58,8 @@ export default {
                 email: '',
                 password: '',
                 password_confirmation: '',
-                remember: false
+                remember: false,
+                subscribe: false,
             },
             errors: {}
         };

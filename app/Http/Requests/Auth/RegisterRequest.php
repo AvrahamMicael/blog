@@ -28,7 +28,8 @@ class RegisterRequest extends FormRequest
             'name' => 'required|string',
             'email' => 'required|email|string|unique:users,email',
             'password' => ['required', 'confirmed', Password::defaults()],
-            'role' => 'prohibited'
+            'role' => 'prohibited',
+            'subscribe' => 'required|boolean',
         ];
     }
 }

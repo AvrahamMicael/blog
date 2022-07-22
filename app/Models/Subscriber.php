@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Http\Requests\StoreSubscriberRequest;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class Subscriber extends Model
@@ -41,5 +43,13 @@ class Subscriber extends Model
             $secret .= Str::uuid();
         }
         return $secret;
+    }
+
+    public static function createWithToken(Request $req): Subscriber
+    {
+
+        $data = $req->validate((new StoreSubscriberRequest)->rules());
+        $data['token'] = Subscriber::genToken();
+        return Subscriber::create($data);
     }
 }

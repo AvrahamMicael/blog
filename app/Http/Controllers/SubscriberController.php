@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreSubscriberRequest;
 use App\Models\Subscriber;
 use App\Providers\Subscribed;
 use App\Providers\Unsubscribed;
@@ -28,14 +27,11 @@ class SubscriberController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreSubscriberRequest $req)
+    public function store(Request $req)
     {
-        $data = $req->all();
-        $data['token'] = Subscriber::genToken();
-
-        $subscriber = Subscriber::create($data);
-        Subscribed::dispatch($subscriber);
-
+        Subscribed::dispatch(
+            Subscriber::createWithToken($req)
+        );
         cache()->increment('subscribers-count');
         return response(Subscriber::countCacheRemember(), 201);
     }

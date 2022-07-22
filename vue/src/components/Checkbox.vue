@@ -9,7 +9,16 @@
 
 <script>
 export default {
-    props: ['label', 'modelValue'],
+    props: {
+        label: {
+            type: String,
+            required: true,
+        },
+        modelValue: {
+            type: Boolean,
+            required: true,
+        },
+    },
     computed: {
         input_value: {
             get() {
