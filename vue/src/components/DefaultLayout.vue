@@ -2,13 +2,24 @@
     <div class="container">
         <div class="row justify-content-center">
             <router-view/>
-            <aside class="col-md-3 mb-4">
+            <aside class="col-lg-3 col-md-4 mb-4">
                 <div class="card mb-4">
                     <div class="card-body">
                         <Img src="/author.jpg" alt="author" classes="rounded-circle"/>
                         <p class="mb-0 mt-3 text-secondary fw-light">
                             Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio praesentium fugit consequuntur, odit exercitationem optio rem placeat quibusdam voluptatibus fuga repudiandae consequatur voluptate aliquam ea at doloremque aspernatur ipsa. Quo.
                         </p>
+                        <div class="d-flex justify-content-center mt-2">
+                            <span v-for="(link, index) in social_medias" :key="link.icon">
+                                <a :href="link.href" class="btn btn-outline-info">
+                                    <span class="sr-only">{{ link.sr_only }}</span>
+                                    <i :class="link.icon"/>
+                                </a>
+                                <span v-if="index + 1 != social_medias.length">
+                                    &nbsp;
+                                </span>
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <div v-if="subscribers !== null" class="card">
@@ -98,6 +109,14 @@ export default {
     },
     computed: {
         ...mapState(['subscribers']),
+        social_medias() {
+            return [
+                { sr_only: 'My facebook', href: 'javascript:;', icon: 'fa-brands fa-facebook-f' },
+                { sr_only: 'My instagram', href: 'javascript:;', icon: 'fa-brands fa-instagram' },
+                { sr_only: 'My twitter', href: 'javascript:;', icon: 'fa-brands fa-twitter' },
+                { sr_only: 'My youtube channel', href: 'javascript:;', icon: 'fa-brands fa-youtube' },
+            ];
+        },
     },
 };
 </script>

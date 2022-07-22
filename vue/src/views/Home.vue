@@ -10,7 +10,7 @@
                     >
                         <hr v-if="posts.data[index + 1]">
                     </Post>
-                    <div v-if="posts.links.length > 3" class="d-flex justify-content-center">
+                    <div v-if="posts.links.length > 3" class="text-center">
                         <nav class="btn-group" role="group">
                             <a
                                 v-for="link in posts.links" :key="link.label"
@@ -57,7 +57,7 @@ export default {
             if(['Home', 'Search'].includes(to.name))
             {
                 Object.assign(this.$data, initialState());
-                this.posts.data = { data: [], links: [] };
+                this.posts = { data: [], links: [] };
                 this.getPagesOrError();
             }
         },

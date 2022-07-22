@@ -31,12 +31,11 @@ const routes = [
    {
       path: '/',
       component: OneColumnLayout,
-      meta: { isAdmin: true },
       children: [
-         { name: 'NewPost', path: '/post/create', component: ConfigurePost},
-         { name: 'EditPost', path: '/post/:slug/edit', component: ConfigurePost},
-         { name: 'NotFound', path: '/error/404', component: NotFound, meta: { isAdmin: false } },
-         { name: 'Unsubscribe', path: '/subscriber/delete/:id/:token', component: Unsubscribe, meta: { isAdmin: false } },
+         { name: 'NewPost', path: '/post/create', component: ConfigurePost, meta: { isAdmin: true } },
+         { name: 'EditPost', path: '/post/:slug/edit', component: ConfigurePost, meta: { isAdmin: true } },
+         { name: 'NotFound', path: '/error/404', component: NotFound },
+         { name: 'Unsubscribe', path: '/subscriber/delete/:id/:token', component: Unsubscribe },
       ]
    },
    {
@@ -70,7 +69,10 @@ router.beforeEach((to, from, next) => {
    {
       next({name: 'Home'});
    }
-   next();
+   else
+   {
+      next();
+   }
 });
 
 export default router;

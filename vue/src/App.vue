@@ -13,8 +13,14 @@ export default {
     AuthPopup,
     Loader
   },
+  methods: {
+      setTitle() {
+        document.title = import.meta.env.VITE_SITE_TITLE;
+      },
+  },
   created() {
     this.$store.dispatch('getSubscribersNumber');
+    this.setTitle()
   },
 };
 </script>

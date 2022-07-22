@@ -1,32 +1,40 @@
 <template>
     <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-        <li v-for="item in navigation" :key="item.name">
+        <li>
             <router-link
-                :to="item.to"
-                active-class="link-secondary"
-                :class="[
-                    this.$route.name == item.to.name
-                    ? null
-                    : 'link-dark',
-                    'nav-link px-2'
-                ]"
+                :to="{ name: 'Home' }"
+                :class="classBasedOnRoute('Home')"
             >
-                {{ item.name }}
+                Home
             </router-link>
+        </li>
+        <li>
+            <a
+                :href="`mailto:${contact_email}`"
+                :class="classBasedOnRoute()"
+            >
+                Contact
+            </a>
         </li>
     </ul>        
 </template>
 
 <script>
 export default {
-    data() {
-        return {
-            navigation: [
-                {name: 'Home', to: {name: 'Home'}},
-                {name: 'Contact', to: '#'},
-                {name: 'About', to: '#'}
-            ]
-        };
-    }
+    methods: {
+        classBasedOnRoute(route_name = null) {
+            return [
+                    this.$route.name == route_name
+                    ? 'link-secondary'
+                    : 'link-dark',
+                    'nav-link px-2'
+                ];
+        },
+    },
+    computed: {
+        contact_email() {
+            return import.meta.env.VITE_CONTACT_EMAIL;
+        },
+    },
 }
 </script>
