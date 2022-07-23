@@ -7,6 +7,7 @@ const store = createStore({
         user: {
             data: JSON.parse(sessionStorage.getItem('user.data')) ?? {},
             token: JSON.parse(sessionStorage.getItem('user.token')),
+            notifications: null,
         },
         subscribers: null,
         popup: null,
@@ -18,6 +19,15 @@ const store = createStore({
     },
     getters: {},
     actions: {
+        getNotificationsQty({ commit }) {
+            return axiosClient.get('/notification')
+                .then(( { data } ) => commit('setNotificationsQty', data.notifications_qty))
+                .catch(() => commit('setNotificationsQty', 0));
+        },
+        clearNotifications({ commit }) {
+            commit('setNotificationsQty', 0);
+            return axiosClient.delete('/notification');
+        },
         async getSearchedPosts({ commit }, search = null) {
             return await axiosClient.get(`/post/search/${search}`)
                 .then(( { data } ) => {
@@ -64,7 +74,7 @@ const store = createStore({
                 .then(() => commit('deletePost', post))
                 .finally(() => commit('toggleLoader'));
         },
-        async submitAuthForm({ commit }, user) {
+        async submitAuthForm({ commit, dispatch }, user) {
             let auth_errors = {};
             commit('toggleLoader');
 
@@ -72,6 +82,7 @@ const store = createStore({
                 .then(( { data } ) => {
                     commit('changeAuthPopup', null);
                     commit('setUser', data);
+                    dispatch('getNotificationsQty');
                     return data;
                 })
                 .catch(error => auth_errors = error.response.data.errors)
@@ -151,6 +162,9 @@ const store = createStore({
         }
     },
     mutations: {
+        setNotificationsQty(state, qty) {
+            state.user.notifications = qty || null;
+        },
         updateUser(state, data) {
             sessionStorage.setItem('user.data', JSON.stringify(data));
             state.user.data = data;

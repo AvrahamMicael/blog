@@ -30,4 +30,9 @@ class User extends Authenticatable
     protected $attributes = [
         'role' => Role::USER
     ];
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class, 'id_user');
+    }
 }

@@ -43,6 +43,8 @@ import axiosClient from '../axios';
 import Comment from '../components/Comment.vue';
 import Alert from '../components/Alert.vue';
 import SecondaryLoader from '../components/SecondaryLoader.vue';
+import { mapState } from 'vuex';
+import store from '../store';
 
 const initialState = () => ({
     comments: {
@@ -61,11 +63,15 @@ export default {
         },
     }),
     watch: {
-        async $route(to) {
+        async $route(to, from) {
             Object.assign(this.$data, initialState());
             if(['UserComments', 'UserReplies'].includes(to.name))
             {
                 await this.getComments();
+            }
+            if(from.name == 'UserReplies' && this.user.notifications)
+            {
+                store.dispatch('clearNotifications');
             }
         },
     },
@@ -101,6 +107,9 @@ export default {
 
             this.comments.loading = false;
         },
+    },
+    computed: {
+        ...mapState(['user']),
     },
     async created() {
         await this.getComments();

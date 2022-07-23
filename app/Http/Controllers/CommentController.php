@@ -45,7 +45,7 @@ class CommentController extends Controller
         $data = Comment::getBasicDataToStore($req);
         if($req->id_reply_to)
         {
-            $comment = Reply::create($data);
+            $comment = Reply::createWithNotificationIfUserExists($data);
         }
         else
         {

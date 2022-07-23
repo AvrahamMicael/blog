@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Abstracts\CommentPattern;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class Reply extends CommentPattern
@@ -16,6 +17,17 @@ class Reply extends CommentPattern
         'id_reply_to',
         'id_post',
     ];
+
+    private function getRepliedUserIdIfExists(): ?int
+    {
+        return DB::table('replies as r')
+            ->select('u.id')
+            ->join('comments as c', 'c.id', '=', 'r.id_reply_to')
+            ->leftJoin('users as u', 'u.id', '=', 'c.id_user')
+            ->where('r.id', $this->id)
+            ->first()
+            ?->id;
+    }
 
     public static function getUserReplies(): LengthAwarePaginator
     {
@@ -31,5 +43,21 @@ class Reply extends CommentPattern
             })
             ->orderBy('r.created_at', 'desc')
             ->paginate(10);
+    }
+
+    public static function createWithNotificationIfUserExists(array $data): Reply
+    {
+        $reply = Reply::create($data);
+
+        $id_replied_user = $reply->getRepliedUserIdIfExists();
+        if($id_replied_user && $id_replied_user != auth('sanctum')->id())
+        {
+            Notification::create([
+                'id_reply' => $reply->id,
+                'id_user' => $id_replied_user,
+            ]);
+        }
+
+        return $reply;
     }
 }

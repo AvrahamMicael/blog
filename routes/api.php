@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\PostImageController;
 use App\Http\Controllers\ReplyController;
@@ -35,6 +36,15 @@ Route::group([
     'middleware' => 'auth:sanctum',
 ], function() {
     Route::patch('/', 'update');
+    Route::delete('/', 'destroy');
+});
+
+Route::group([
+    'controller' => NotificationController::class,
+    'middleware' => 'auth:sanctum',
+    'prefix' => 'notification',
+], function() {
+    Route::get('/', 'index');
     Route::delete('/', 'destroy');
 });
 
