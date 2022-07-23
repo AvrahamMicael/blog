@@ -45,6 +45,8 @@ import { mapState } from 'vuex';
 import { admin } from '../constants/Roles.js';
 import PostContent from './PostContent.vue';
 import { formatDate } from '../common-functions.js';
+import router from '../router/index.js';
+import store from '../store/index.js';
 
 export default {
     data() {
@@ -61,10 +63,9 @@ export default {
         deletePost(post) {
             confirm('Are you sure? This action cannot be undone.')
             {
-                this.$store
-                    .dispatch('deletePost', post)
+                store.dispatch('deletePost', post)
                     .then(() => {
-                        if(this.$route.name == 'Post') this.$router.push({
+                        router.push({
                             name: 'Home'
                         });
                     })

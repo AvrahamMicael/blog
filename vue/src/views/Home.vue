@@ -57,7 +57,7 @@ export default {
             if(['Home', 'Search'].includes(to.name))
             {
                 Object.assign(this.$data, initialState());
-                this.posts = { data: [], links: [] };
+                store.commit('clearPosts');
                 this.getPagesOrError();
             }
         },

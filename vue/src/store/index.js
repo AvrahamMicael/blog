@@ -165,6 +165,9 @@ const store = createStore({
         setNotificationsQty(state, qty) {
             state.user.notifications = qty || null;
         },
+        clearPosts(state) {
+            state.posts = { data: [], links: [] };
+        },
         updateUser(state, data) {
             sessionStorage.setItem('user.data', JSON.stringify(data));
             state.user.data = data;
